@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Albion Tools</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- ===== Barra de navegación fija ===== -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <span class="brand">⚔️ Albion Tools</span>
+      <div class="nav-tabs" role="tablist">
+        <button type="button" class="nav-btn" data-tab="market" role="tab">🪙 Mercado</button>
+        <button type="button" class="nav-btn" data-tab="refining" role="tab">⚒️ Refinamiento</button>
+        <button type="button" class="nav-btn" data-tab="crafting" role="tab">🛡️ Crafteo</button>
+        <button type="button" class="nav-btn" data-tab="breeding" role="tab">🐄 Crianza</button>
+        <button type="button" class="nav-btn" data-tab="farming" role="tab">🌱 Cultivos</button>
+        <button type="button" class="nav-btn" data-tab="consumables" role="tab">🧪 Consumibles</button>
+        <button type="button" class="nav-btn" data-tab="butcher" role="tab">🔪 Carnicería</button>
+      </div>
+      <select id="region-select" title="Servidor">
+        <option value="west">Americas (west)</option>
+        <option value="east">Asia (east)</option>
+        <option value="europe">Europe</option>
+      </select>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <!-- ===================== MERCADO ===================== -->
+    <section id="tab-market" class="tab-section">
+      <div class="card filters-card">
+        <div class="filters">
+          <div class="filter-group filter-categories">
+            <div class="filter-head">
+              <span class="filter-label">Categoría</span>
+              <form id="search-form" class="search">
+                <input id="item-input" type="text" placeholder="ID manual, ej: T4_BAG@1" autocomplete="off">
+                <button type="submit" class="btn-gold">Buscar</button>
+              </form>
+            </div>
+            <div id="group-tabs" class="tabs" role="tablist"></div>
+            <input id="item-filter" type="text" class="item-filter" placeholder="🔎 Buscar por nombre (ej: arco largo, capa de martlock)…" autocomplete="off">
+            <div id="sub-buttons" class="btn-group sub-panel"></div>
+            <div id="category-buttons" class="btn-group category-panel"></div>
+            <small id="filter-hint" class="hint"></small>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">Tier</span>
+            <div id="tier-buttons" class="btn-group"></div>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">Encantamiento</span>
+            <div id="enchant-buttons" class="btn-group"></div>
+          </div>
+        </div>
+      </div>
+
+      <section id="item-header" class="item-header hidden">
+        <img id="item-img" alt="">
+        <div>
+          <h2 id="item-title"></h2>
+          <p class="muted"><code id="item-id"></code> · <span id="item-region"></span></p>
+        </div>
+      </section>
+
+      <p id="status" class="status">Elige una categoría, tier y encantamiento.</p>
+
+      <div class="table-wrap">
+        <table id="prices-table" class="data-table hidden">
+          <thead>
+            <tr>
+              <th>Ciudad</th>
+              <th>Calidad</th>
+              <th>Precio mín. venta</th>
+              <th>Precio máx. compra</th>
+              <th>Actualizado</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===================== REFINAMIENTO ===================== -->
+    <section id="tab-refining" class="tab-section">
+      <div class="calc-grid">
+        <form class="card calc-form" id="ref-form" onsubmit="return false">
+          <h2>Calculadora de Refinamiento</h2>
+
+          <div class="field">
+            <span class="filter-label">Recurso</span>
+            <div id="ref-resource" class="btn-group"></div>
+            <small id="ref-bonus-city" class="hint"></small>
+          </div>
+          <div class="field">
+            <span class="filter-label">Tier</span>
+            <div id="ref-tier" class="btn-group"></div>
+          </div>
+          <div class="field">
+            <span class="filter-label">Encantamiento</span>
+            <div id="ref-enchant" class="btn-group"></div>
+          </div>
+
+          <div class="field-row">
+            <label class="field">
+              <span class="filter-label">Cantidad a refinar</span>
+              <input type="number" id="ref-qty" min="1" value="100">
+            </label>
+            <label class="field">
+              <span class="filter-label">Tarifa estación (/100 nutr.)</span>
+              <input type="number" id="ref-fee" min="0" value="0">
+            </label>
+          </div>
+
+          <label class="field">
+            <span class="filter-label">Tasa de devolución (RRR)</span>
+            <select id="ref-rrr"></select>
+            <input type="number" id="ref-rrr-custom" class="hidden" min="0" max="99" step="0.1" placeholder="RRR en %, ej: 48">
+          </label>
+
+          <div class="toggles">
+            <label class="toggle"><input type="checkbox" id="ref-focus"><span class="switch"></span>¿Usar Foco?</label>
+            <label class="toggle"><input type="checkbox" id="ref-premium" checked><span class="switch"></span>¿Tiene Premium?</label>
+            <label class="toggle"><input type="checkbox" id="ref-sellorder" checked><span class="switch"></span>Vender con orden de venta</label>
+          </div>
+
+          <div class="field-row">
+            <label class="field">
+              <span class="filter-label">Comprar en</span>
+              <select id="ref-buy-city"></select>
+            </label>
+            <label class="field">
+              <span class="filter-label">Vender en</span>
+              <select id="ref-sell-city"></select>
+            </label>
+          </div>
+
+          <details class="spec-panel">
+            <summary>🎓 Especialización y foco <span id="ref-spec-summary" class="spec-summary"></span></summary>
+            <div id="ref-spec-fields" class="spec-fields"></div>
+            <div id="ref-spec-result" class="spec-result"></div>
+          </details>
+
+          <button type="button" id="ref-reload" class="btn-gold">↻ Recargar precios</button>
+        </form>
+
+        <div class="card calc-results">
+          <div class="result-head">
+            <img id="ref-product-img" alt="">
+            <div>
+              <h3 id="ref-product-name"></h3>
+              <code id="ref-product-id"></code>
+            </div>
+          </div>
+          <p id="ref-focus-line" class="focus-line"></p>
+          <p id="ref-status" class="status"></p>
+          <div class="table-wrap">
+            <table class="data-table mat-table">
+              <thead>
+                <tr><th>Material</th><th>Base</th><th>Consumo (RRR)</th><th>Precio unit.</th><th>Subtotal</th></tr>
+              </thead>
+              <tbody id="ref-materials"></tbody>
+            </table>
+          </div>
+          <div id="ref-stats" class="stats"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== CRAFTEO ===================== -->
+    <section id="tab-crafting" class="tab-section">
+      <div class="calc-grid">
+        <form class="card calc-form" id="craft-form" onsubmit="return false">
+          <h2>Calculadora de Crafteo</h2>
+
+          <label class="field">
+            <span class="filter-label">Ítem a fabricar</span>
+            <select id="craft-item"></select>
+          </label>
+          <div class="field">
+            <span class="filter-label">Tier</span>
+            <div id="craft-tier" class="btn-group"></div>
+          </div>
+          <div class="field">
+            <span class="filter-label">Encantamiento</span>
+            <div id="craft-enchant" class="btn-group"></div>
+          </div>
+
+          <div class="field-row">
+            <label class="field">
+              <span class="filter-label">Cantidad de ítems</span>
+              <input type="number" id="craft-qty" min="1" value="10">
+            </label>
+            <label class="field">
+              <span class="filter-label">Tarifa estación (/100 nutr.)</span>
+              <input type="number" id="craft-fee" min="0" value="0">
+            </label>
+          </div>
+
+          <label class="field">
+            <span class="filter-label">Tasa de devolución (RRR)</span>
+            <select id="craft-rrr"></select>
+            <input type="number" id="craft-rrr-custom" class="hidden" min="0" max="99" step="0.1" placeholder="RRR en %, ej: 30">
+          </label>
+
+          <div class="toggles">
+            <label class="toggle"><input type="checkbox" id="craft-premium" checked><span class="switch"></span>¿Tiene Premium?</label>
+            <label class="toggle"><input type="checkbox" id="craft-sellorder" checked><span class="switch"></span>Vender con orden de venta</label>
+          </div>
+
+          <div class="field-row">
+            <label class="field">
+              <span class="filter-label">Comprar en</span>
+              <select id="craft-buy-city"></select>
+            </label>
+            <label class="field">
+              <span class="filter-label">Vender en</span>
+              <select id="craft-sell-city"></select>
+            </label>
+          </div>
+
+          <details class="spec-panel">
+            <summary>🎓 Especialización y foco <span id="craft-spec-summary" class="spec-summary"></span></summary>
+            <div id="craft-spec-fields" class="spec-fields"></div>
+            <div id="craft-spec-result" class="spec-result"></div>
+          </details>
+
+          <button type="button" id="craft-reload" class="btn-gold">↻ Recargar precios</button>
+        </form>
+
+        <div class="card calc-results">
+          <div class="result-head">
+            <img id="craft-product-img" alt="">
+            <div>
+              <h3 id="craft-product-name"></h3>
+              <code id="craft-product-id"></code>
+            </div>
+          </div>
+          <p id="craft-focus-line" class="focus-line"></p>
+          <p id="craft-status" class="status"></p>
+          <div class="table-wrap">
+            <table class="data-table mat-table">
+              <thead>
+                <tr><th>Material</th><th>Base</th><th>Consumo (RRR)</th><th>Precio unit.</th><th>Subtotal</th></tr>
+              </thead>
+              <tbody id="craft-materials"></tbody>
+            </table>
+          </div>
+          <div id="craft-stats" class="stats"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== CRIANZA ===================== -->
+    <section id="tab-breeding" class="tab-section">
+      <div class="calc-grid">
+        <form class="card calc-form" id="breed-form" onsubmit="return false">
+          <h2>Calculadora de Crianza</h2>
+
+          <div id="breed-category" class="btn-group subcat"></div>
+
+          <label class="field">
+            <span class="filter-label">Animal</span>
+            <select id="breed-animal"></select>
+          </label>
+          <div class="field" id="breed-tier-field">
+            <span class="filter-label">Tier</span>
+            <div id="breed-tier" class="btn-group"></div>
+          </div>
+
+          <div class="field-row">
+            <label class="field">
+              <span class="filter-label">Cantidad de animales</span>
+              <input type="number" id="breed-qty" min="1" value="9">
+            </label>
+            <label class="field">
+              <span class="filter-label">Comida</span>
+              <select id="breed-food"></select>
+            </label>
+          </div>
+
+          <div class="field-row">
+            <label class="field">
+              <span class="filter-label">Comida por animal</span>
+              <input type="number" id="breed-plants" min="0">
+            </label>
+            <label class="field">
+              <span class="filter-label">Prob. de cría (%)</span>
+              <input type="number" id="breed-offspring" min="0" max="300" step="0.1">
+            </label>
+          </div>
+          <small class="hint">Ambos valores se rellenan con los datos del juego; puedes ajustarlos a mano.</small>
+
+          <div class="toggles">
+            <label class="toggle"><input type="checkbox" id="breed-focus"><span class="switch"></span>¿Usar Foco? (Nutrir)</label>
+            <label class="toggle"><input type="checkbox" id="breed-own-babies"><span class="switch"></span>¿Ya tengo las crías? (no se compran)</label>
+            <label class="toggle"><input type="checkbox" id="breed-premium" checked><span class="switch"></span>¿Tiene Premium?</label>
+            <label class="toggle"><input type="checkbox" id="breed-sellorder" checked><span class="switch"></span>Vender con orden de venta</label>
+          </div>
+
+          <div class="field-row">
+            <label class="field">
+              <span class="filter-label">Comprar en</span>
+              <select id="breed-buy-city"></select>
+            </label>
+            <label class="field">
+              <span class="filter-label">Vender en</span>
+              <select id="breed-sell-city"></select>
+            </label>
+          </div>
+
+          <details class="spec-panel">
+            <summary>🎓 Especialización y foco <span id="breed-spec-summary" class="spec-summary"></span></summary>
+            <div id="breed-spec-fields" class="spec-fields"></div>
+            <div id="breed-spec-result" class="spec-result"></div>
+          </details>
+
+          <button type="button" id="breed-reload" class="btn-gold">📊 Calcular</button>
+        </form>
+
+        <div class="card calc-results">
+          <div class="result-head">
+            <img id="breed-product-img" alt="">
+            <div>
+              <h3 id="breed-product-name"></h3>
+              <code id="breed-product-id"></code>
+            </div>
+          </div>
+          <p id="breed-focus-line" class="focus-line"></p>
+          <div id="breed-info" class="info-chips"></div>
+          <p id="breed-babies" class="verdict"></p>
+          <p id="breed-status" class="status"></p>
+          <div class="table-wrap">
+            <table class="data-table mat-table">
+              <thead>
+                <tr><th>Insumo</th><th>Base</th><th>Neto (tras retorno)</th><th>Precio unit.</th><th>Subtotal</th></tr>
+              </thead>
+              <tbody id="breed-materials"></tbody>
+            </table>
+          </div>
+          <div id="breed-stats" class="stats"></div>
+
+          <!-- Comparación: vender el adulto crudo vs. ensillarlo como montura -->
+          <div id="breed-mount" class="mount-panel hidden">
+            <h4>🐎 Ensillado: ¿vender crudo o como montura?</h4>
+            <div class="table-wrap">
+              <table class="data-table compare-table">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th><span class="compare-head"><img data-m="raw-img" alt=""><span>Adulto (crudo)</span></span></th>
+                    <th><span class="compare-head"><img data-m="mount-img" alt=""><span data-m="mount-name">Montura</span></span></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Gasto de crianza</td><td data-m="raw-cost"></td><td data-m="mount-breed-cost"></td></tr>
+                </tbody>
+                <!-- Una fila por material de ensillado (cuero, corazones...), generadas desde script.js -->
+                <tbody data-m="parts"></tbody>
+                <tbody>
+                  <tr>
+                    <td>Costo de ensillado</td>
+                    <td class="empty">—</td>
+                    <td data-m="saddle-cost"></td>
+                  </tr>
+                  <tr>
+                    <td>Precio de venta (unid.)</td>
+                    <td data-m="raw-price"></td>
+                    <td><input type="number" min="0" class="price-input" data-m="mount-price"></td>
+                  </tr>
+                  <tr><td>Ingreso bruto</td><td data-m="raw-gross"></td><td data-m="mount-gross"></td></tr>
+                  <tr><td>Impuestos</td><td data-m="raw-tax"></td><td data-m="mount-tax"></td></tr>
+                  <tr class="total"><td>📈 Ganancia neta</td><td data-m="raw-profit"></td><td data-m="mount-profit"></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="verdict" data-m="verdict"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== CONSUMIBLES ===================== -->
+    <section id="tab-consumables" class="tab-section">
+      <div class="calc-grid">
+        <form class="card calc-form" id="cons-form" onsubmit="return false">
+          <h2>Consumibles</h2>
+
+          <div id="cons-category" class="btn-group subcat"></div>
+
+          <label class="field">
+            <span class="filter-label">Receta</span>
+            <select id="cons-item"></select>
+          </label>
+          <div class="field">
+            <span class="filter-label">Tier</span>
+            <div id="cons-tier" class="btn-group"></div>
+          </div>
+
+          <label class="field">
+            <span class="filter-label">Cantidad de recetas</span>
+            <input type="number" id="cons-qty" min="1" value="1">
+            <small id="cons-yield" class="hint"></small>
+          </label>
+
+          <label class="field">
+            <span class="filter-label">Tasa de devolución (RRR)</span>
+            <select id="cons-rrr"></select>
+            <input type="number" id="cons-rrr-custom" class="hidden" min="0" max="99" step="0.1" placeholder="RRR en %, ej: 47.7">
+          </label>
+
+          <div class="toggles">
+            <label class="toggle"><input type="checkbox" id="cons-premium" checked><span class="switch"></span>¿Tiene Premium?</label>
+            <label class="toggle"><input type="checkbox" id="cons-sellorder" checked><span class="switch"></span>Vender con orden de venta</label>
+          </div>
+
+          <div class="field-row">
+            <label class="field">
+              <span class="filter-label">Comprar en</span>
+              <select id="cons-buy-city"></select>
+            </label>
+            <label class="field">
+              <span class="filter-label">Vender en</span>
+              <select id="cons-sell-city"></select>
+            </label>
+          </div>
+
+          <details class="spec-panel">
+            <summary>🎓 Especialización y foco <span id="cons-spec-summary" class="spec-summary"></span></summary>
+            <div id="cons-spec-fields" class="spec-fields"></div>
+            <div id="cons-spec-result" class="spec-result"></div>
+          </details>
+
+          <button type="button" id="cons-reload" class="btn-gold">📊 Calcular</button>
+        </form>
+
+        <div class="card calc-results">
+          <div class="result-head">
+            <img id="cons-product-img" alt="">
+            <div>
+              <h3 id="cons-product-name"></h3>
+              <code id="cons-product-id"></code>
+            </div>
+          </div>
+          <p id="cons-focus-line" class="focus-line"></p>
+
+          <!-- Análisis de rentabilidad: costo de fabricación vs. precio de mercado -->
+          <div id="cons-verdict" class="verdict-panel">
+            <div class="versus">
+              <div class="versus-side">
+                <span class="label">🔨 Costo de fabricación</span>
+                <span class="value" data-v="cost"></span>
+                <span class="sub">por unidad</span>
+              </div>
+              <span class="versus-vs">VS</span>
+              <div class="versus-side">
+                <span class="label">🏪 Precio de mercado</span>
+                <span class="value" data-v="market"></span>
+                <span class="sub" data-v="net"></span>
+              </div>
+            </div>
+            <p class="verdict-msg" data-v="message"></p>
+          </div>
+
+          <p id="cons-status" class="status"></p>
+          <div class="table-wrap">
+            <table class="data-table mat-table">
+              <thead>
+                <tr><th>Ingrediente</th><th>Base</th><th>Consumo (RRR)</th><th>Precio unit.</th><th>Subtotal</th></tr>
+              </thead>
+              <tbody id="cons-materials"></tbody>
+            </table>
+          </div>
+          <div id="cons-stats" class="stats"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== CULTIVOS ===================== -->
+    <section id="tab-farming" class="tab-section">
+      <div class="calc-grid">
+        <form class="card calc-form" id="farm-form" onsubmit="return false">
+          <h2>Cultivos y hierbas</h2>
+
+          <div id="farm-kind" class="btn-group subcat"></div>
+
+          <label class="field">
+            <span class="filter-label">Semilla</span>
+            <select id="farm-seed"></select>
+          </label>
+
+          <div class="field-row">
+            <label class="field">
+              <span class="filter-label">Semillas a plantar</span>
+              <input type="number" id="farm-qty" min="1" value="9">
+              <small id="farm-plots" class="hint"></small>
+            </label>
+            <label class="field">
+              <span class="filter-label">Isla / parcela en</span>
+              <select id="farm-location"></select>
+            </label>
+          </div>
+          <small id="farm-location-hint" class="hint"></small>
+
+          <div class="toggles">
+            <label class="toggle"><input type="checkbox" id="farm-focus"><span class="switch"></span>¿Regar con Foco?</label>
+            <label class="toggle"><input type="checkbox" id="farm-own-seeds"><span class="switch"></span>¿Ya tengo las semillas? (no se compran)</label>
+            <label class="toggle"><input type="checkbox" id="farm-premium" checked><span class="switch"></span>¿Tiene Premium? (cosecha doble)</label>
+            <label class="toggle"><input type="checkbox" id="farm-sellorder" checked><span class="switch"></span>Vender con orden de venta</label>
+          </div>
+
+          <div class="field-row">
+            <label class="field">
+              <span class="filter-label">Comprar semillas en</span>
+              <select id="farm-buy-city"></select>
+            </label>
+            <label class="field">
+              <span class="filter-label">Vender cosecha en</span>
+              <select id="farm-sell-city"></select>
+            </label>
+          </div>
+
+          <details class="spec-panel">
+            <summary>🎓 Especialización y foco <span id="farm-spec-summary" class="spec-summary"></span></summary>
+            <div id="farm-spec-fields" class="spec-fields"></div>
+            <div id="farm-spec-result" class="spec-result"></div>
+          </details>
+
+          <button type="button" id="farm-reload" class="btn-gold">📊 Calcular</button>
+        </form>
+
+        <div class="card calc-results">
+          <div class="result-head">
+            <img id="farm-product-img" alt="">
+            <div>
+              <h3 id="farm-product-name"></h3>
+              <code id="farm-product-id"></code>
+            </div>
+          </div>
+          <p id="farm-focus-line" class="focus-line"></p>
+          <div id="farm-info" class="info-chips"></div>
+          <p id="farm-seeds" class="verdict"></p>
+          <p id="farm-status" class="status"></p>
+          <div class="table-wrap">
+            <table class="data-table mat-table">
+              <thead>
+                <tr><th>Semilla</th><th>Plantadas</th><th>Consumo neto</th><th>Precio unit.</th><th>Subtotal</th></tr>
+              </thead>
+              <tbody id="farm-materials"></tbody>
+            </table>
+          </div>
+          <div id="farm-stats" class="stats"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== CARNICERÍA ===================== -->
+    <section id="tab-butcher" class="tab-section">
+      <div class="calc-grid">
+        <form class="card calc-form" id="butch-form" onsubmit="return false">
+          <h2>Carnicería</h2>
+
+          <label class="field">
+            <span class="filter-label">Animal adulto</span>
+            <select id="butch-animal"></select>
+          </label>
+
+          <div class="field-row">
+            <label class="field">
+              <span class="filter-label">Animales a sacrificar</span>
+              <input type="number" id="butch-qty" min="1" value="500">
+            </label>
+            <label class="field">
+              <span class="filter-label">Tarifa taller (/100 nutr.)</span>
+              <input type="number" id="butch-fee" min="0" value="300">
+            </label>
+          </div>
+
+          <label class="field">
+            <span class="filter-label">Dónde carnear</span>
+            <select id="butch-location"></select>
+            <small id="butch-rrr-hint" class="hint"></small>
+          </label>
+
+          <div class="toggles">
+            <label class="toggle"><input type="checkbox" id="butch-focus"><span class="switch"></span>¿Usar Foco?</label>
+            <label class="toggle"><input type="checkbox" id="butch-premium" checked><span class="switch"></span>¿Tiene Premium?</label>
+            <label class="toggle"><input type="checkbox" id="butch-sellorder"><span class="switch"></span>Vender con orden de venta (+2,5%)</label>
+          </div>
+
+          <div class="field-row">
+            <label class="field">
+              <span class="filter-label">Comprar animales en</span>
+              <select id="butch-buy-city"></select>
+            </label>
+            <label class="field">
+              <span class="filter-label">Vender carne en</span>
+              <select id="butch-sell-city"></select>
+            </label>
+          </div>
+
+          <details class="spec-panel">
+            <summary>🎓 Especialización y foco <span id="butch-spec-summary" class="spec-summary"></span></summary>
+            <div id="butch-spec-fields" class="spec-fields"></div>
+            <div id="butch-spec-result" class="spec-result"></div>
+          </details>
+
+          <button type="button" id="butch-reload" class="btn-gold">📊 Calcular</button>
+        </form>
+
+        <div class="card calc-results">
+          <div class="result-head">
+            <img id="butch-product-img" alt="">
+            <div>
+              <h3 id="butch-product-name"></h3>
+              <code id="butch-product-id"></code>
+            </div>
+          </div>
+          <p id="butch-focus-line" class="focus-line"></p>
+
+          <!-- Resumen de la carnicería -->
+          <div id="butch-summary" class="verdict-panel">
+            <dl class="summary-list">
+              <div><dt>🐄 Inversión inicial</dt><dd><span data-s="invest"></span><small data-s="invest-sub"></small></dd></div>
+              <div><dt>🏭 Costo del taller</dt><dd><span data-s="fee"></span><small data-s="fee-sub"></small></dd></div>
+              <div><dt>🥩 Carne obtenida</dt><dd><span data-s="meat"></span><small data-s="meat-sub"></small></dd></div>
+              <div><dt>🧾 Impuestos</dt><dd><span data-s="tax"></span><small data-s="tax-sub"></small></dd></div>
+              <div class="summary-total"><dt>📈 Ganancia neta</dt><dd><span data-s="profit"></span></dd></div>
+            </dl>
+            <p class="verdict-msg" data-s="message"></p>
+          </div>
+
+          <p id="butch-status" class="status"></p>
+          <div class="table-wrap">
+            <table class="data-table mat-table">
+              <thead>
+                <tr><th>Animal</th><th>Base</th><th>Consumo</th><th>Precio unit.</th><th>Subtotal</th></tr>
+              </thead>
+              <tbody id="butch-materials"></tbody>
+            </table>
+          </div>
+          <div id="butch-stats" class="stats"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="muted">Datos: Albion Online Data Project · Los precios son editables en las calculadoras</footer>
+
+  <script src="market-data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
