@@ -404,18 +404,70 @@ const FOCUS_PER_MATERIAL_T4 = 1286 / 24;
 const FOCUS_TIER_FACTOR = 1.75;
 
 // Consumibles: no siguen una fórmula. Según la wiki, se gasta por unidad fabricada (no por receta).
+// Comidas: craftingfocus de items.xml; si es una lista, va por encantamiento [plano, .1, .2, .3].
 const CONSUMABLE_FOCUS = {
   T2_POTION_HEAL: 56, T4_POTION_HEAL: 210, T6_POTION_HEAL: 768,
   T2_POTION_ENERGY: 56, T4_POTION_ENERGY: 210, T6_POTION_ENERGY: 768,
   T3_POTION_REVIVE: 56, T5_POTION_REVIVE: 294, T7_POTION_REVIVE: 1020,
   T3_POTION_STONESKIN: 56, T5_POTION_STONESKIN: 294, T7_POTION_STONESKIN: 1272,
   T4_POTION_COOLDOWN: 84, T6_POTION_COOLDOWN: 378, T8_POTION_COOLDOWN: 1272,
-  T1_MEAL_SOUP: 56, T3_MEAL_SOUP: 168, T5_MEAL_SOUP: 504,
-  T2_MEAL_SALAD: 56, T4_MEAL_SALAD: 168, T6_MEAL_SALAD: 504,
-  T3_MEAL_PIE: 53, T5_MEAL_PIE: 180, T7_MEAL_PIE: 540,
-  T3_MEAL_OMELETTE: 52, T5_MEAL_OMELETTE: 155, T7_MEAL_OMELETTE: 464,
-  T3_MEAL_OMELETTE_AVALON: 52, T5_MEAL_OMELETTE_AVALON: 155, T7_MEAL_OMELETTE_AVALON: 464,
-  T4_MEAL_STEW: 61, T6_MEAL_STEW: 184, T8_MEAL_STEW: 551,
+  T1_MEAL_SOUP: [56, 78, 123, 256],
+  T3_MEAL_SOUP: [168, 235, 368, 769],
+  T5_MEAL_SOUP: [504, 704, 1105, 2306],
+  T2_MEAL_SALAD: [56, 78, 123, 256],
+  T4_MEAL_SALAD: [168, 235, 368, 769],
+  T6_MEAL_SALAD: [504, 704, 1105, 2306],
+  T3_MEAL_PIE: [53, 75, 120, 253],
+  T5_MEAL_PIE: [180, 246, 380, 780],
+  T7_MEAL_PIE: [540, 739, 1140, 2341],
+  T3_MEAL_OMELETTE: [52, 74, 118, 252],
+  T5_MEAL_OMELETTE: [155, 222, 355, 755],
+  T7_MEAL_OMELETTE: [464, 665, 1065, 2266],
+  T3_MEAL_ROAST: [58, 81, 125, 259],
+  T5_MEAL_ROAST: [176, 243, 376, 777],
+  T7_MEAL_ROAST: [528, 728, 1128, 2329],
+  T4_MEAL_STEW: [61, 84, 128, 262],
+  T6_MEAL_STEW: [184, 251, 384, 785],
+  T8_MEAL_STEW: [551, 752, 1152, 2353],
+  T4_MEAL_SANDWICH: [55, 77, 122, 255],
+  T6_MEAL_SANDWICH: [165, 231, 365, 765],
+  T8_MEAL_SANDWICH: [494, 694, 1094, 2295],
+  T3_MEAL_OMELETTE_AVALON: [52, 74, 118, 252],
+  T5_MEAL_OMELETTE_AVALON: [155, 222, 355, 755],
+  T7_MEAL_OMELETTE_AVALON: [464, 665, 1065, 2266],
+  T4_MEAL_STEW_AVALON: [58, 81, 125, 259],
+  T6_MEAL_STEW_AVALON: [176, 243, 376, 777],
+  T8_MEAL_STEW_AVALON: [528, 728, 1128, 2329],
+  T4_MEAL_SANDWICH_AVALON: [55, 77, 122, 255],
+  T6_MEAL_SANDWICH_AVALON: [165, 231, 365, 765],
+  T8_MEAL_SANDWICH_AVALON: [494, 694, 1094, 2295],
+  T1_MEAL_GRILLEDFISH: 15,
+  T1_MEAL_SEAWEEDSALAD: 4,
+  T1_MEAL_SOUP_FISH: [77, 144, 278, 678],
+  T3_MEAL_SOUP_FISH: [231, 432, 832, 2033],
+  T5_MEAL_SOUP_FISH: [672, 1272, 2473, 6076],
+  T2_MEAL_SALAD_FISH: [77, 144, 278, 678],
+  T4_MEAL_SALAD_FISH: [231, 432, 832, 2033],
+  T6_MEAL_SALAD_FISH: [672, 1272, 2473, 6076],
+  T3_MEAL_PIE_FISH: [81, 147, 281, 681],
+  T5_MEAL_PIE_FISH: [225, 425, 825, 2026],
+  T7_MEAL_PIE_FISH: [672, 1272, 2473, 6076],
+  T3_MEAL_OMELETTE_FISH: [77, 144, 278, 678],
+  T5_MEAL_OMELETTE_FISH: [225, 425, 825, 2026],
+  T7_MEAL_OMELETTE_FISH: [672, 1272, 2473, 6076],
+  T3_MEAL_OMELETTE_DRAGONAREA: [77, 144, 278, 678],
+  T5_MEAL_OMELETTE_DRAGONAREA: [225, 425, 825, 2026],
+  T7_MEAL_OMELETTE_DRAGONAREA: [672, 1272, 2473, 6076],
+  T3_MEAL_ROAST_FISH: [77, 144, 278, 678],
+  T5_MEAL_ROAST_FISH: [225, 425, 825, 2026],
+  T7_MEAL_ROAST_FISH: [652, 1253, 2454, 6056],
+  T4_MEAL_STEW_FISH: [77, 144, 278, 678],
+  T6_MEAL_STEW_FISH: [225, 425, 825, 2026],
+  T8_MEAL_STEW_FISH: [652, 1253, 2454, 6056],
+  T4_MEAL_SANDWICH_FISH: [81, 147, 281, 681],
+  T6_MEAL_SANDWICH_FISH: [231, 432, 832, 2033],
+  T8_MEAL_SANDWICH_FISH: [672, 1272, 2473, 6076],
+  T8_MEAL_SPECIAL_FOOD_DRAKE_EGG: 0,
 };
 
 // Eficiencia (FCE) y calidad que da cada nivel:
@@ -638,15 +690,35 @@ const CONSUMABLE_TABS = [
   { value: "alchemy", label: "⚗️ Alquimia" },
 ];
 
+// Ciudad con +15% de crafteo (craftingmodifiers.xml: "food" en Caerleon, "potion" en Brecilien).
+const CONSUMABLE_BONUS_CITY = { cooking: "Caerleon", alchemy: "Brecilien" };
+
 // Familias del selector: "code" + tier forman el ID (ej: T5 + MEAL_SOUP → T5_MEAL_SOUP).
 const CONSUMABLE_FAMILIES = [
-  // === COCINA (10 unidades por receta) ===
-  { tab: "cooking", name: "Sopas",               effect: "Regeneración de vida",        code: "MEAL_SOUP",            tiers: [1, 3, 5] },
-  { tab: "cooking", name: "Ensaladas",           effect: "Velocidad de crafteo",        code: "MEAL_SALAD",           tiers: [2, 4, 6] },
-  { tab: "cooking", name: "Pasteles",            effect: "Carga máxima",                code: "MEAL_PIE",             tiers: [3, 5, 7] },
-  { tab: "cooking", name: "Tortillas",           effect: "Reducción de enfriamientos",  code: "MEAL_OMELETTE",        tiers: [3, 5, 7] },
-  { tab: "cooking", name: "Tortillas avalonianas", effect: "Reducción de enfriamientos", code: "MEAL_OMELETTE_AVALON", tiers: [3, 5, 7] },
-  { tab: "cooking", name: "Guisos",              effect: "Aumento de daño",             code: "MEAL_STEW",            tiers: [4, 6, 8] },
+  // === COCINA (10 unidades por receta; las de pescado, 1) ===
+  // category = tipo de plato del primer selector; la primera familia de cada categoría es la normal
+  // (su code es la clave de la especialización).
+  { tab: "cooking", category: "Sopas", name: "Sopas", effect: "Regeneración de vida", code: "MEAL_SOUP", tiers: [1, 3, 5], enchants: 3 },
+  { tab: "cooking", category: "Sopas", name: "Sopas de almeja", effect: "Regeneración de vida", code: "MEAL_SOUP_FISH", tiers: [1, 3, 5], enchants: 3 },
+  { tab: "cooking", category: "Ensaladas", name: "Ensaladas", effect: "Calidad y velocidad de crafteo", code: "MEAL_SALAD", tiers: [2, 4, 6], enchants: 3 },
+  { tab: "cooking", category: "Ensaladas", name: "Ensaladas de calamar/pulpo/kraken", effect: "Calidad y velocidad de crafteo", code: "MEAL_SALAD_FISH", tiers: [2, 4, 6], enchants: 3 },
+  { tab: "cooking", category: "Pasteles", name: "Pasteles", effect: "Carga máxima y recolección", code: "MEAL_PIE", tiers: [3, 5, 7], enchants: 3 },
+  { tab: "cooking", category: "Pasteles", name: "Pasteles de ojo muerto", effect: "Carga máxima y recolección", code: "MEAL_PIE_FISH", tiers: [3, 5, 7], enchants: 3 },
+  { tab: "cooking", category: "Tortillas", name: "Tortillas", effect: "Reducción de enfriamientos", code: "MEAL_OMELETTE", tiers: [3, 5, 7], enchants: 3 },
+  { tab: "cooking", category: "Tortillas", name: "Tortillas avalonianas", effect: "Reducción de enfriamientos", code: "MEAL_OMELETTE_AVALON", tiers: [3, 5, 7], enchants: 3 },
+  { tab: "cooking", category: "Tortillas", name: "Tortillas de cangrejo", effect: "Reducción de enfriamientos", code: "MEAL_OMELETTE_FISH", tiers: [3, 5, 7], enchants: 3 },
+  { tab: "cooking", category: "Tortillas", name: "Tortillas de leyaleta", effect: "Enfriamientos y curación recibida", code: "MEAL_OMELETTE_DRAGONAREA", tiers: [3, 5, 7], enchants: 3 },
+  { tab: "cooking", category: "Asados", name: "Asados", effect: "Robo de vida", code: "MEAL_ROAST", tiers: [3, 5, 7], enchants: 3 },
+  { tab: "cooking", category: "Asados", name: "Pargos asados", effect: "Robo de vida", code: "MEAL_ROAST_FISH", tiers: [3, 5, 7], enchants: 3 },
+  { tab: "cooking", category: "Guisos", name: "Guisos", effect: "Aumento de daño", code: "MEAL_STEW", tiers: [4, 6, 8], enchants: 3 },
+  { tab: "cooking", category: "Guisos", name: "Guisos avalonianos", effect: "Aumento de daño", code: "MEAL_STEW_AVALON", tiers: [4, 6, 8], enchants: 3 },
+  { tab: "cooking", category: "Guisos", name: "Guisos de anguila", effect: "Aumento de daño", code: "MEAL_STEW_FISH", tiers: [4, 6, 8], enchants: 3 },
+  { tab: "cooking", category: "Bocadillos", name: "Bocadillos", effect: "Vida máxima", code: "MEAL_SANDWICH", tiers: [4, 6, 8], enchants: 3 },
+  { tab: "cooking", category: "Bocadillos", name: "Bocadillos avalonianos", effect: "Vida máxima", code: "MEAL_SANDWICH_AVALON", tiers: [4, 6, 8], enchants: 3 },
+  { tab: "cooking", category: "Bocadillos", name: "Bocadillos de locha", effect: "Vida máxima", code: "MEAL_SANDWICH_FISH", tiers: [4, 6, 8], enchants: 3 },
+  { tab: "cooking", category: "Otros", name: "Pescado a la plancha", effect: "Reducción de enfriamientos", code: "MEAL_GRILLEDFISH", tiers: [1] },
+  { tab: "cooking", category: "Otros", name: "Ensalada de alga", effect: "Velocidad de pesca", code: "MEAL_SEAWEEDSALAD", tiers: [1] },
+  { tab: "cooking", category: "Otros", name: "Galletas de Huevo de Draco", effect: "Bonus de fama", code: "MEAL_SPECIAL_FOOD_DRAKE_EGG", tiers: [8] },
 
   // === ALQUIMIA (5 unidades por receta) ===
   { tab: "alchemy", name: "Pociones de curación",    effect: "Cura vida",                 code: "POTION_HEAL",      tiers: [2, 4, 6] },
@@ -658,6 +730,7 @@ const CONSUMABLE_FAMILIES = [
 
 // Recetas por ID: yield = unidades producidas por receta.
 // ingredients = [id, cantidad por receta, retornable (por defecto true; false = la RRR no lo devuelve)]
+// sauce = salsa de pescado por receta en .1/.2/.3 (T1_FISHSAUCE_LEVEL{n}); el resto de ingredientes no cambia.
 const CONSUMABLE_RECIPES = {
   T2_POTION_HEAL: { name: "Poción de curación menor", yield: 5, ingredients: [["T2_AGARIC", 8]] },
   T4_POTION_HEAL: { name: "Poción de curación", yield: 5, ingredients: [["T4_BURDOCK", 24], ["T3_EGG", 6]] },
@@ -674,60 +747,218 @@ const CONSUMABLE_RECIPES = {
   T4_POTION_COOLDOWN: { name: "Poción de veneno menor", yield: 5, ingredients: [["T4_BURDOCK", 8], ["T3_COMFREY", 4]] },
   T6_POTION_COOLDOWN: { name: "Poción de veneno", yield: 5, ingredients: [["T6_FOXGLOVE", 24], ["T5_TEASEL", 12], ["T3_COMFREY", 12], ["T6_MILK", 6]] },
   T8_POTION_COOLDOWN: { name: "Poción de veneno mayor", yield: 5, ingredients: [["T8_YARROW", 72], ["T7_MULLEIN", 36], ["T5_TEASEL", 36], ["T8_MILK", 18], ["T8_ALCOHOL", 18]] },
-  T1_MEAL_SOUP: { name: "Sopa de zanahoria", yield: 10, ingredients: [["T1_CARROT", 16]] },
-  T3_MEAL_SOUP: { name: "Sopa de trigo", yield: 10, ingredients: [["T3_WHEAT", 48]] },
-  T5_MEAL_SOUP: { name: "Sopa de col", yield: 10, ingredients: [["T5_CABBAGE", 144]] },
-  T2_MEAL_SALAD: { name: "Ensalada de frijoles", yield: 10, ingredients: [["T2_BEAN", 8], ["T1_CARROT", 8]] },
-  T4_MEAL_SALAD: { name: "Ensalada de rábano", yield: 10, ingredients: [["T4_TURNIP", 24], ["T3_WHEAT", 24]] },
-  T6_MEAL_SALAD: { name: "Ensalada de patata", yield: 10, ingredients: [["T6_POTATO", 72], ["T5_CABBAGE", 72]] },
-  T3_MEAL_PIE: { name: "Pastel de pollo", yield: 10, ingredients: [["T3_WHEAT", 2], ["T3_FLOUR", 4], ["T3_MEAT", 8]] },
-  T5_MEAL_PIE: { name: "Pastel de ganso", yield: 10, ingredients: [["T5_CABBAGE", 6], ["T3_FLOUR", 12], ["T5_MEAT", 24], ["T4_MILK", 6]] },
-  T7_MEAL_PIE: { name: "Pastel de cerdo", yield: 10, ingredients: [["T7_CORN", 18], ["T3_FLOUR", 36], ["T7_MEAT", 72], ["T6_MILK", 18]] },
-  T3_MEAL_OMELETTE: { name: "Tortilla de pollo", yield: 10, ingredients: [["T3_WHEAT", 4], ["T3_MEAT", 8], ["T3_EGG", 2]] },
-  T5_MEAL_OMELETTE: { name: "Tortilla de ganso", yield: 10, ingredients: [["T5_CABBAGE", 12], ["T5_MEAT", 24], ["T5_EGG", 6]] },
-  T7_MEAL_OMELETTE: { name: "Tortilla de cerdo", yield: 10, ingredients: [["T7_CORN", 36], ["T7_MEAT", 72], ["T5_EGG", 18]] },
-  T3_MEAL_OMELETTE_AVALON: { name: "Tortilla de pollo avaloniana", yield: 10, ingredients: [["T4_MILK", 4], ["T3_MEAT", 8], ["T3_EGG", 2], ["QUESTITEM_TOKEN_AVALON", 10, false]] },
-  T5_MEAL_OMELETTE_AVALON: { name: "Tortilla de ganso avaloniana", yield: 10, ingredients: [["T6_MILK", 12], ["T5_MEAT", 24], ["T5_EGG", 6], ["QUESTITEM_TOKEN_AVALON", 30, false]] },
-  T7_MEAL_OMELETTE_AVALON: { name: "Tortilla de cerdo avaloniana", yield: 10, ingredients: [["T8_MILK", 36], ["T7_MEAT", 72], ["T5_EGG", 18], ["QUESTITEM_TOKEN_AVALON", 90, false]] },
-  T4_MEAL_STEW: { name: "Guiso de cabra", yield: 10, ingredients: [["T4_TURNIP", 4], ["T4_BREAD", 4], ["T4_MEAT", 8]] },
-  T6_MEAL_STEW: { name: "Guiso de carnero", yield: 10, ingredients: [["T6_POTATO", 12], ["T4_BREAD", 12], ["T6_MEAT", 24]] },
-  T8_MEAL_STEW: { name: "Guiso de ternera", yield: 10, ingredients: [["T8_PUMPKIN", 36], ["T4_BREAD", 36], ["T8_MEAT", 72]] },
+  T1_MEAL_SOUP: { name: "Sopa de zanahoria", yield: 10, sauce: 10, ingredients: [["T1_CARROT", 16]] },
+  T3_MEAL_SOUP: { name: "Sopa de trigo", yield: 10, sauce: 30, ingredients: [["T3_WHEAT", 48]] },
+  T5_MEAL_SOUP: { name: "Sopa de col", yield: 10, sauce: 90, ingredients: [["T5_CABBAGE", 144]] },
+  T2_MEAL_SALAD: { name: "Ensalada de frijoles", yield: 10, sauce: 10, ingredients: [["T2_BEAN", 8], ["T1_CARROT", 8]] },
+  T4_MEAL_SALAD: { name: "Ensalada de rábano", yield: 10, sauce: 30, ingredients: [["T4_TURNIP", 24], ["T3_WHEAT", 24]] },
+  T6_MEAL_SALAD: { name: "Ensalada de patata", yield: 10, sauce: 90, ingredients: [["T6_POTATO", 72], ["T5_CABBAGE", 72]] },
+  T3_MEAL_PIE: { name: "Pastel de pollo", yield: 10, sauce: 10, ingredients: [["T3_WHEAT", 2], ["T3_FLOUR", 4], ["T3_MEAT", 8]] },
+  T5_MEAL_PIE: { name: "Pastel de ganso", yield: 10, sauce: 30, ingredients: [["T5_CABBAGE", 6], ["T3_FLOUR", 12], ["T5_MEAT", 24], ["T4_MILK", 6]] },
+  T7_MEAL_PIE: { name: "Pastel de cerdo", yield: 10, sauce: 90, ingredients: [["T7_CORN", 18], ["T3_FLOUR", 36], ["T7_MEAT", 72], ["T6_MILK", 18]] },
+  T3_MEAL_OMELETTE: { name: "Tortilla de pollo", yield: 10, sauce: 10, ingredients: [["T3_WHEAT", 4], ["T3_MEAT", 8], ["T3_EGG", 2]] },
+  T5_MEAL_OMELETTE: { name: "Tortilla de ganso", yield: 10, sauce: 30, ingredients: [["T5_CABBAGE", 12], ["T5_MEAT", 24], ["T5_EGG", 6]] },
+  T7_MEAL_OMELETTE: { name: "Tortilla de cerdo", yield: 10, sauce: 90, ingredients: [["T7_CORN", 36], ["T7_MEAT", 72], ["T5_EGG", 18]] },
+  T3_MEAL_ROAST: { name: "Pollo asado", yield: 10, sauce: 10, ingredients: [["T3_MEAT", 8], ["T2_BEAN", 4], ["T4_MILK", 4]] },
+  T5_MEAL_ROAST: { name: "Ganso asado", yield: 10, sauce: 30, ingredients: [["T5_MEAT", 24], ["T5_CABBAGE", 12], ["T6_MILK", 12]] },
+  T7_MEAL_ROAST: { name: "Cerdo asado", yield: 10, sauce: 90, ingredients: [["T7_MEAT", 72], ["T7_CORN", 36], ["T8_MILK", 36]] },
+  T4_MEAL_STEW: { name: "Guiso de cabra", yield: 10, sauce: 10, ingredients: [["T4_TURNIP", 4], ["T4_BREAD", 4], ["T4_MEAT", 8]] },
+  T6_MEAL_STEW: { name: "Guiso de carnero", yield: 10, sauce: 30, ingredients: [["T6_POTATO", 12], ["T4_BREAD", 12], ["T6_MEAT", 24]] },
+  T8_MEAL_STEW: { name: "Guiso de ternera", yield: 10, sauce: 90, ingredients: [["T8_PUMPKIN", 36], ["T4_BREAD", 36], ["T8_MEAT", 72]] },
+  T4_MEAL_SANDWICH: { name: "Bocadillo de cabra", yield: 10, sauce: 10, ingredients: [["T4_BREAD", 4], ["T4_MEAT", 8], ["T4_BUTTER", 2]] },
+  T6_MEAL_SANDWICH: { name: "Bocadillo de carnero", yield: 10, sauce: 30, ingredients: [["T4_BREAD", 12], ["T6_MEAT", 24], ["T6_BUTTER", 6]] },
+  T8_MEAL_SANDWICH: { name: "Bocadillo de ternera", yield: 10, sauce: 90, ingredients: [["T4_BREAD", 36], ["T8_MEAT", 72], ["T8_BUTTER", 18]] },
+  T3_MEAL_OMELETTE_AVALON: { name: "Tortilla de pollo avaloniana", yield: 10, sauce: 10, ingredients: [["T4_MILK", 4], ["T3_MEAT", 8], ["T3_EGG", 2], ["QUESTITEM_TOKEN_AVALON", 10, false]] },
+  T5_MEAL_OMELETTE_AVALON: { name: "Tortilla de ganso avaloniana", yield: 10, sauce: 30, ingredients: [["T6_MILK", 12], ["T5_MEAT", 24], ["T5_EGG", 6], ["QUESTITEM_TOKEN_AVALON", 30, false]] },
+  T7_MEAL_OMELETTE_AVALON: { name: "Tortilla de cerdo avaloniana", yield: 10, sauce: 90, ingredients: [["T8_MILK", 36], ["T7_MEAT", 72], ["T5_EGG", 18], ["QUESTITEM_TOKEN_AVALON", 90, false]] },
+  T4_MEAL_STEW_AVALON: { name: "Guiso de cabra avaloniano", yield: 10, sauce: 10, ingredients: [["T1_CARROT", 4], ["T4_TURNIP", 4], ["T4_MEAT", 8], ["QUESTITEM_TOKEN_AVALON", 10, false]] },
+  T6_MEAL_STEW_AVALON: { name: "Guiso de cordero avaloniano", yield: 10, sauce: 30, ingredients: [["T5_CABBAGE", 12], ["T6_POTATO", 12], ["T6_MEAT", 24], ["QUESTITEM_TOKEN_AVALON", 30, false]] },
+  T8_MEAL_STEW_AVALON: { name: "Guiso de ternera avaloniano", yield: 10, sauce: 90, ingredients: [["T7_CORN", 36], ["T8_PUMPKIN", 36], ["T8_MEAT", 72], ["QUESTITEM_TOKEN_AVALON", 90, false]] },
+  T4_MEAL_SANDWICH_AVALON: { name: "Bocadillo de cabra avaloniano", yield: 10, sauce: 10, ingredients: [["T4_BREAD", 4], ["T4_MEAT", 8], ["T4_BUTTER", 2], ["QUESTITEM_TOKEN_AVALON", 10, false]] },
+  T6_MEAL_SANDWICH_AVALON: { name: "Bocadillo de cordero avaloniano", yield: 10, sauce: 30, ingredients: [["T4_BREAD", 12], ["T6_MEAT", 24], ["T6_BUTTER", 6], ["QUESTITEM_TOKEN_AVALON", 30, false]] },
+  T8_MEAL_SANDWICH_AVALON: { name: "Bocadillo de ternera avaloniano", yield: 10, sauce: 90, ingredients: [["T4_BREAD", 36], ["T8_MEAT", 72], ["T8_BUTTER", 18], ["QUESTITEM_TOKEN_AVALON", 90, false]] },
+  T1_MEAL_GRILLEDFISH: { name: "Pescado a la plancha", yield: 1, ingredients: [["T1_FISHCHOPS", 10]] },
+  T1_MEAL_SEAWEEDSALAD: { name: "Ensalada de alga", yield: 1, ingredients: [["T1_SEAWEED", 10]] },
+  T1_MEAL_SOUP_FISH: { name: "Sopa de almeja verdosa", yield: 1, sauce: 3, ingredients: [["T3_FISH_FRESHWATER_SWAMP_RARE", 1], ["T1_CARROT", 2]] },
+  T3_MEAL_SOUP_FISH: { name: "Sopa de almeja de aguas turbias", yield: 1, sauce: 9, ingredients: [["T5_FISH_FRESHWATER_SWAMP_RARE", 1], ["T3_WHEAT", 2], ["T3_COMFREY", 2], ["T3_MEAT", 2]] },
+  T5_MEAL_SOUP_FISH: { name: "Sopa de almeja de pantano negro", yield: 1, sauce: 27, ingredients: [["T7_FISH_FRESHWATER_SWAMP_RARE", 1], ["T5_CABBAGE", 6], ["T5_TEASEL", 6], ["T5_MEAT", 6]] },
+  T2_MEAL_SALAD_FISH: { name: "Ensalada de calamar de aguas poco profundas", yield: 1, sauce: 3, ingredients: [["T3_FISH_SALTWATER_ALL_RARE", 1], ["T2_BEAN", 1], ["T2_AGARIC", 1]] },
+  T4_MEAL_SALAD_FISH: { name: "Ensalada de pulpo de aguas medias", yield: 1, sauce: 9, ingredients: [["T5_FISH_SALTWATER_ALL_RARE", 1], ["T4_TURNIP", 2], ["T4_BURDOCK", 2], ["T4_MEAT", 2]] },
+  T6_MEAL_SALAD_FISH: { name: "Ensalada de kraken de agua profunda", yield: 1, sauce: 27, ingredients: [["T7_FISH_SALTWATER_ALL_RARE", 1], ["T6_POTATO", 6], ["T6_FOXGLOVE", 6], ["T6_MEAT", 6]] },
+  T3_MEAL_PIE_FISH: { name: "Pastel de ojo muerto de las sierras", yield: 1, sauce: 3, ingredients: [["T3_FISH_FRESHWATER_MOUNTAIN_RARE", 1], ["T3_FLOUR", 1], ["T3_EGG", 1]] },
+  T5_MEAL_PIE_FISH: { name: "Pastel de ojo muerto de las montañas", yield: 1, sauce: 9, ingredients: [["T5_FISH_FRESHWATER_MOUNTAIN_RARE", 1], ["T5_CABBAGE", 2], ["T5_TEASEL", 2], ["T5_EGG", 2]] },
+  T7_MEAL_PIE_FISH: { name: "Pastel de ojo muerto dos picos", yield: 1, sauce: 27, ingredients: [["T7_FISH_FRESHWATER_MOUNTAIN_RARE", 1], ["T7_CORN", 6], ["T7_MULLEIN", 6], ["T7_MEAT", 6]] },
+  T3_MEAL_OMELETTE_FISH: { name: "Tortilla de cangrejo de río abajo", yield: 1, sauce: 3, ingredients: [["T3_FISH_FRESHWATER_STEPPE_RARE", 1], ["T3_COMFREY", 1], ["T3_EGG", 1]] },
+  T5_MEAL_OMELETTE_FISH: { name: "Tortilla de cangrejo de río", yield: 1, sauce: 9, ingredients: [["T5_FISH_FRESHWATER_STEPPE_RARE", 1], ["T5_CABBAGE", 2], ["T5_TEASEL", 2], ["T5_EGG", 2]] },
+  T7_MEAL_OMELETTE_FISH: { name: "Tortilla de cangrejo de pozo", yield: 1, sauce: 27, ingredients: [["T7_FISH_FRESHWATER_STEPPE_RARE", 1], ["T7_CORN", 6], ["T7_MULLEIN", 6], ["T7_MEAT", 6]] },
+  T3_MEAL_OMELETTE_DRAGONAREA: { name: "Tortilla de Leyaleta Serena", yield: 1, sauce: 3, ingredients: [["T3_FISH_FRESHWATER_DRAGON_AREA_RARE", 1], ["T4_MILK", 1], ["T3_COMFREY", 1], ["T3_EGG", 1]] },
+  T5_MEAL_OMELETTE_DRAGONAREA: { name: "Tortilla de Leyaleta Almabrillante", yield: 1, sauce: 9, ingredients: [["T5_FISH_FRESHWATER_DRAGON_AREA_RARE", 1], ["T6_MILK", 2], ["T5_TEASEL", 2], ["T5_EGG", 2]] },
+  T7_MEAL_OMELETTE_DRAGONAREA: { name: "Tortilla de Leyaleta Dragontina", yield: 1, sauce: 27, ingredients: [["T7_FISH_FRESHWATER_DRAGON_AREA_RARE", 1], ["T7_MULLEIN", 6], ["T5_TEASEL", 6], ["T5_EGG", 6]] },
+  T3_MEAL_ROAST_FISH: { name: "Pargo de niebla blanca asado", yield: 1, sauce: 3, ingredients: [["T3_FISH_FRESHWATER_AVALON_RARE", 1], ["T3_COMFREY", 1], ["T4_MILK", 1]] },
+  T5_MEAL_ROAST_FISH: { name: "Pargo de niebla ligera asado", yield: 1, sauce: 9, ingredients: [["T5_FISH_FRESHWATER_AVALON_RARE", 1], ["T5_CABBAGE", 2], ["T5_TEASEL", 2], ["T6_MILK", 2]] },
+  T7_MEAL_ROAST_FISH: { name: "Pargo de niebla pura asado", yield: 1, sauce: 27, ingredients: [["T7_FISH_FRESHWATER_AVALON_RARE", 1], ["T7_CORN", 6], ["T7_MULLEIN", 6], ["T8_MILK", 6]] },
+  T4_MEAL_STEW_FISH: { name: "Guiso de anguila de agua verdosa", yield: 1, sauce: 3, ingredients: [["T3_FISH_FRESHWATER_FOREST_RARE", 1], ["T4_TURNIP", 1], ["T4_BURDOCK", 1]] },
+  T6_MEAL_STEW_FISH: { name: "Guiso de anguila rojiza", yield: 1, sauce: 9, ingredients: [["T5_FISH_FRESHWATER_FOREST_RARE", 1], ["T6_POTATO", 2], ["T6_FOXGLOVE", 2], ["T6_MILK", 2]] },
+  T8_MEAL_STEW_FISH: { name: "Guiso de anguila de agua podrida", yield: 1, sauce: 27, ingredients: [["T7_FISH_FRESHWATER_FOREST_RARE", 1], ["T8_PUMPKIN", 6], ["T8_YARROW", 6], ["T8_MILK", 6]] },
+  T4_MEAL_SANDWICH_FISH: { name: "Bocadillo de locha pedregosa", yield: 1, sauce: 3, ingredients: [["T3_FISH_FRESHWATER_HIGHLANDS_RARE", 1], ["T4_TURNIP", 1], ["T4_BUTTER", 1]] },
+  T6_MEAL_SANDWICH_FISH: { name: "Bocadillo de locha de agua corriente", yield: 1, sauce: 9, ingredients: [["T5_FISH_FRESHWATER_HIGHLANDS_RARE", 1], ["T6_POTATO", 2], ["T6_FOXGLOVE", 2], ["T6_BUTTER", 2]] },
+  T8_MEAL_SANDWICH_FISH: { name: "Bocadillo de locha de trueno", yield: 1, sauce: 27, ingredients: [["T7_FISH_FRESHWATER_HIGHLANDS_RARE", 1], ["T8_PUMPKIN", 6], ["T8_YARROW", 6], ["T8_BUTTER", 6]] },
+  T8_MEAL_SPECIAL_FOOD_DRAKE_EGG: { name: "Galletas de Huevo de Draco", yield: 99, ingredients: [["T3_FLOUR", 36], ["T8_BUTTER", 12], ["T8_MILK", 24], ["T8_FARM_DRAKE_BABY", 1]] },
 };
 
 const INGREDIENT_NAMES = {
   QUESTITEM_TOKEN_AVALON: "Energía avaloniana",
   T1_CARROT: "Zanahorias",
+  T1_FISHCHOPS: "Pescado picado",
+  T1_FISHSAUCE_LEVEL1: "Salsa de pescado básica",
+  T1_FISHSAUCE_LEVEL2: "Salsa de pescado extravagante",
+  T1_FISHSAUCE_LEVEL3: "Salsa de pescado especial",
+  T1_SEAWEED: "Alga",
   T2_AGARIC: "Agárico arcano",
   T2_BEAN: "Frijoles",
   T3_COMFREY: "Consuelda hojabrillante",
   T3_EGG: "Huevos de gallina",
+  T3_FISH_FRESHWATER_AVALON_RARE: "Pargo de niebla blanca",
+  T3_FISH_FRESHWATER_DRAGON_AREA_RARE: "Leyaleta Serena",
+  T3_FISH_FRESHWATER_FOREST_RARE: "Anguila de agua verdosa",
+  T3_FISH_FRESHWATER_HIGHLANDS_RARE: "Locha pedregosa",
+  T3_FISH_FRESHWATER_MOUNTAIN_RARE: "Ojo muerto de las sierras",
+  T3_FISH_FRESHWATER_STEPPE_RARE: "Cangrejo de río abajo",
+  T3_FISH_FRESHWATER_SWAMP_RARE: "Almeja verdosa",
+  T3_FISH_SALTWATER_ALL_RARE: "Calamar de aguas poco profundas",
   T3_FLOUR: "Harina",
   T3_MEAT: "Carne de pollo",
   T3_WHEAT: "Manojo de trigo",
   T4_BREAD: "Pan",
   T4_BURDOCK: "Bardana almenada",
+  T4_BUTTER: "Manteca de cabra",
   T4_MEAT: "Carne de cabra",
   T4_MILK: "Leche de cabra",
   T4_TURNIP: "Rábanos",
   T5_CABBAGE: "Coles",
   T5_EGG: "Huevos de ganso",
+  T5_FISH_FRESHWATER_AVALON_RARE: "Pargo de niebla ligera",
+  T5_FISH_FRESHWATER_DRAGON_AREA_RARE: "Leyaleta Almabrillante",
+  T5_FISH_FRESHWATER_FOREST_RARE: "Anguila rojiza",
+  T5_FISH_FRESHWATER_HIGHLANDS_RARE: "Locha de agua corriente",
+  T5_FISH_FRESHWATER_MOUNTAIN_RARE: "Ojo muerto de las montañas",
+  T5_FISH_FRESHWATER_STEPPE_RARE: "Cangrejo de río",
+  T5_FISH_FRESHWATER_SWAMP_RARE: "Almeja de aguas turbias",
+  T5_FISH_SALTWATER_ALL_RARE: "Pulpo de aguas medias",
   T5_MEAT: "Carne de ganso",
   T5_TEASEL: "Cardo de dragón",
   T6_ALCOHOL: "Schnapps de patata",
+  T6_BUTTER: "Manteca de oveja",
   T6_FOXGLOVE: "Dedalera elusiva",
   T6_MEAT: "Carne de carnero",
   T6_MILK: "Leche de oveja",
   T6_POTATO: "Patatas",
   T7_ALCOHOL: "Orujo de maíz",
   T7_CORN: "Fardo de maíz",
+  T7_FISH_FRESHWATER_AVALON_RARE: "Pargo de niebla pura",
+  T7_FISH_FRESHWATER_DRAGON_AREA_RARE: "Leyaleta Dragontina",
+  T7_FISH_FRESHWATER_FOREST_RARE: "Anguila de agua podrida",
+  T7_FISH_FRESHWATER_HIGHLANDS_RARE: "Locha de trueno",
+  T7_FISH_FRESHWATER_MOUNTAIN_RARE: "Ojo muerto de dos picos",
+  T7_FISH_FRESHWATER_STEPPE_RARE: "Cangrejo de pozo",
+  T7_FISH_FRESHWATER_SWAMP_RARE: "Almeja de pantano negro",
+  T7_FISH_SALTWATER_ALL_RARE: "Kraken de agua profunda",
   T7_MEAT: "Carne de cerdo",
   T7_MULLEIN: "Gordolobo de fuego",
   T8_ALCOHOL: "Aguardiente de calabaza",
+  T8_BUTTER: "Manteca de vaca",
+  T8_FARM_DRAKE_BABY: "Huevo de Draco Ala de Fuego",
   T8_MEAT: "Carne de ternera",
   T8_MILK: "Leche de vaca",
   T8_PUMPKIN: "Calabaza",
   T8_YARROW: "Milenrama demoníaca",
 };
+
+// ============================================================
+//  DATOS DE PESCA (los peces y sus probabilidades están en fishing-data.js)
+// ============================================================
+// Biomas de las zonas de pesca. Los raros de cada bioma también salen (menos) en dos biomas vecinos.
+const FISHING_BIOMES = {
+  FOREST:      { icon: "🌲", name: "Bosque",              where: "región de Lymhurst",      water: "fresh" },
+  MOUNTAIN:    { icon: "🏔️", name: "Montaña",             where: "región de Fort Sterling", water: "fresh" },
+  SWAMP:       { icon: "🐸", name: "Pantano",             where: "región de Thetford",      water: "fresh" },
+  STEPPE:      { icon: "🌵", name: "Estepa",              where: "región de Bridgewatch",   water: "fresh" },
+  HIGHLANDS:   { icon: "⛰️", name: "Tierras altas",       where: "región de Martlock",      water: "fresh" },
+  AVALON:      { icon: "🔮", name: "Caminos de Ávalon",   where: "zonas de Ávalon",          water: "fresh" },
+  DRAGON_AREA: { icon: "🐉", name: "Tierras Ancestrales", where: "zona de los dragones",     water: "fresh" },
+  OCEAN:       { icon: "🌊", name: "Océano",              where: "costas y mar abierto",     water: "salt" },
+};
+const FRESHWATER_BIOMES = Object.keys(FISHING_BIOMES).filter((b) => FISHING_BIOMES[b].water === "fresh");
+const FISH_KINDS = { common: "Común", rare: "Raro", boss: "Jefe", extra: "Extra" };
+
+// Colores de zona en los que existe cada tier (cluster/world.xml: SAFEAREA T3-T5 y zonas de inicio T1-T2 azules,
+// OPENPVP_YELLOW T5-T6, OPENPVP_RED T6-T7, OPENPVP_BLACK T5-T8). Ávalon y Tierras Ancestrales van aparte.
+const ZONE_COLORS = {
+  blue:   { emoji: "🔵", name: "azul" },
+  yellow: { emoji: "🟡", name: "amarilla" },
+  red:    { emoji: "🔴", name: "roja" },
+  black:  { emoji: "⚫", name: "negra" },
+};
+const TIER_ZONE_COLORS = {
+  1: ["blue"], 2: ["blue"], 3: ["blue"], 4: ["blue"],
+  5: ["blue", "yellow", "black"], 6: ["yellow", "red", "black"], 7: ["red", "black"], 8: ["black"],
+};
+const NO_ZONE_COLOR_BIOMES = ["AVALON", "DRAGON_AREA"];
+
+// Cebos (items.xml + spells.xml FISHINGBAIT_LEVELn_USE): buff "fishingspeed" durante 600 s y 10 cargas (capturas).
+// No tocan las tablas de botín: solo hacen que piquen antes. Se fabrican con lombrices (T1_WORM).
+const FISHING_BAITS = [
+  { id: "",               name: "Sin cebo",          speed: 0 },
+  { id: "T1_FISHINGBAIT", name: "Cebo simple",       speed: 0.5,  worms: 1 },
+  { id: "T3_FISHINGBAIT", name: "Cebo extravagante", speed: 1.25, worms: 5 },
+  { id: "T5_FISHINGBAIT", name: "Cebo especial",     speed: 2.5,  worms: 25 },
+];
+const BAIT_CHARGES = 10;
+const BAIT_DURATION_MIN = 10;
+
+const formatNumberEarly = (n) => n.toLocaleString("es-ES", { maximumFractionDigits: 1 });
+
+// Especialización de pesca, por nivel (wiki oficial: Fisherman y Fishing Specialist, máx. 100 cada uno).
+// speed = velocidad de pesca, yield = rendimiento (probabilidad de doble captura), power = poder de objeto del equipo.
+const FISHING_SPEC = {
+  master: { speed: 0.0016, yield: 0.0016, power: 0.5 }, // Pescador
+  spec:   { speed: 0.0033, yield: 0.0033, power: 2.5 }, // Especialista en pesca
+};
+
+// Equipo de pescador (items.xml + spells.xml). Gorro, atuendo y botas: PASSIVE_(HEAD_|SHOES_)YIELD_FISH_T{n},
+// "+X% de rendimiento de pesca para peces de nivel 1-n cada 30 s mientras lo llevas (se acumula hasta 10 veces)".
+// perStack = rendimiento por carga según el tier de la pieza. El encantamiento no cambia la pasiva.
+const GEAR_MAX_STACKS = 10;
+const GEAR_STACK_SECONDS = 30;
+const FISHING_GEAR = {
+  head:  { name: "Gorro",   perStack: { 4: 0.0025, 5: 0.005, 6: 0.0075, 7: 0.0125, 8: 0.0175 } },
+  armor: { name: "Atuendo", perStack: { 4: 0.005,  5: 0.01,  6: 0.015,  7: 0.025,  8: 0.035 } },
+  shoes: { name: "Botas",   perStack: { 4: 0.0025, 5: 0.005, 6: 0.0075, 7: 0.0125, 8: 0.0175 } },
+};
+// Caña avaloniana: PASSIVE_AVALON_YIELD_FISH_T{n}, rendimiento fijo para peces de nivel n o menor (la normal no tiene pasiva).
+const AVALON_ROD_YIELD = { 4: 0.1, 5: 0.125, 6: 0.15, 7: 0.175, 8: 0.2 };
+// Mochila: PASSIVE_BACKPACK_FISH_T{n}, los peces de nivel n o menor pesan este % menos (no da rendimiento).
+const FISH_BAG_WEIGHT = { 4: 0.2, 5: 0.25, 6: 0.3, 7: 0.35, 8: 0.4 };
+
+// Comidas que ayudan a pescar (spells.xml). Pasteles normales y de pescado: FOOD_(FISH_)LOAD_GATHER_P1..P8,
+// +5% de rendimiento en T3 y +2,5% por cada tier o encantamiento más (T3 = P1, T5 = P3, T7 = P5; .1-.3 suben 1-3).
+const FISHING_FOODS = [
+  { id: "", name: "Sin comida de pesca", speed: 0, yield: 0 },
+  { id: "SEAWEED", name: "Ensalada de alga (+10% vel.)", speed: 0.1, yield: 0 },
+  ...[3, 5, 7].flatMap((tier) =>
+    [0, 1, 2, 3].map((e) => {
+      const bonus = 0.05 + 0.025 * (tier - 3 + e);
+      return {
+        id: `PIE_${tier}_${e}`,
+        group: "Pasteles (doble captura)",
+        name: `Pastel T${tier}${e ? "." + e : ""} (+${formatNumberEarly(bonus * 100)}%)`,
+        speed: 0,
+        yield: bonus,
+      };
+    })
+  ),
+];
+const zoneColorNames = (tier) => TIER_ZONE_COLORS[tier].map((c) => ZONE_COLORS[c].name).join(", ").replace(/, ([^,]*)$/, " o $1");
 
 // ============================================================
 //  API Y UTILIDADES
@@ -831,9 +1062,9 @@ const enchantOptions = () =>
 // ============================================================
 //  NAVEGACIÓN POR PESTAÑAS
 // ============================================================
-const TAB_NAMES = ["market", "refining", "crafting", "breeding", "farming", "consumables", "butcher"];
+const TAB_NAMES = ["market", "refining", "crafting", "breeding", "farming", "consumables", "butcher", "fishing"];
 const navButtons = document.querySelectorAll(".nav-btn");
-const calculators = {}; // se rellenan más abajo: { refining, crafting, breeding, farming, consumables, butcher }
+const calculators = {}; // se rellenan más abajo: { refining, crafting, breeding, farming, consumables, butcher, fishing }
 let currentTab = null;
 
 function showTab(name) {
@@ -2232,27 +2463,44 @@ renderFarmLocations();
 // ============================================================
 //  PESTAÑA: CONSUMIBLES (Cocina y Alquimia)
 // ============================================================
-const consumables = { tab: "cooking", family: "MEAL_SOUP", tier: 5 };
+const consumables = { tab: "cooking", category: "Sopas", family: "MEAL_SOUP", tier: 5, enchant: 0 };
 
 const consItemSelect = $("cons-item");
+const consRecipeSelect = $("cons-recipe");
 const consYield = $("cons-yield");
 const consVerdict = $("cons-verdict");
+const consEnchantField = $("cons-enchant-field");
+const consEnchantHint = $("cons-enchant-hint");
+const consBonusCity = $("cons-bonus-city");
 const verdictField = (name) => consVerdict.querySelector(`[data-v="${name}"]`);
 
 const currentFamily = () => CONSUMABLE_FAMILIES.find((f) => f.code === consumables.family);
-const currentConsumableId = () => `T${consumables.tier}_${consumables.family}`;
+// Categoría = tipo de plato en cocina (Tortillas…); en alquimia cada familia es su propia categoría.
+const familyCategory = (f) => f.category || f.name;
+const categoryFamilies = (tab, category) =>
+  CONSUMABLE_FAMILIES.filter((f) => f.tab === tab && familyCategory(f) === category);
+// Receta base (sin encantamiento): T5_MEAL_SOUP. El producto lleva @n si está encantado.
+const currentRecipeId = () => `T${consumables.tier}_${consumables.family}`;
+const currentConsumableId = () => currentRecipeId() + (consumables.enchant > 0 ? `@${consumables.enchant}` : "");
+
+// Foco de la receta: número, o lista [plano, .1, .2, .3] en las comidas encantables.
+function consumableFocus() {
+  const focus = CONSUMABLE_FOCUS[currentRecipeId()];
+  return Array.isArray(focus) ? focus[consumables.enchant] : focus;
+}
 
 calculators.consumables = createCalculator("cons", {
   rrrOptions: RRR_CRAFTING,
   defaultBuyCity: "Caerleon",
   defaultSellCity: "Caerleon",
   buildModel() {
-    const id = currentConsumableId();
-    const recipe = CONSUMABLE_RECIPES[id];
+    const recipe = CONSUMABLE_RECIPES[currentRecipeId()];
+    const { enchant } = consumables;
+    const ingredients = enchant > 0 ? [...recipe.ingredients, [`T1_FISHSAUCE_LEVEL${enchant}`, recipe.sauce]] : recipe.ingredients;
     return {
-      // "cantidad" = número de recetas; cada una produce recipe.yield unidades (5 pociones o 10 comidas).
-      product: { id, name: recipe.name, value: 0, yield: recipe.yield },
-      materials: recipe.ingredients.map(([ingId, count, returnable = true]) => ({
+      // "cantidad" = número de recetas; cada una produce recipe.yield unidades (5 pociones, 10 comidas, 1 de pescado).
+      product: { id: currentConsumableId(), name: recipe.name + (enchant > 0 ? ` .${enchant}` : ""), value: 0, yield: recipe.yield },
+      materials: ingredients.map(([ingId, count, returnable = true]) => ({
         id: ingId,
         name: INGREDIENT_NAMES[ingId],
         perUnit: count,
@@ -2268,8 +2516,9 @@ calculators.consumables = createCalculator("cons", {
 
 // ---------- Análisis de rentabilidad: fabricar vs. comprar hecho ----------
 function updateConsumableVerdict({ settings: s, totalCost, taxRate, profit, units, sellPrice }) {
-  const recipe = CONSUMABLE_RECIPES[currentConsumableId()];
-  consYield.textContent = `Cada receta produce ${recipe.yield} unidades · ${formatNumber(s.qty)} receta(s) = ${formatNumber(units)} unidades`;
+  const recipe = CONSUMABLE_RECIPES[currentRecipeId()];
+  const plural = (n) => (n === 1 ? "unidad" : "unidades");
+  consYield.textContent = `Cada receta produce ${recipe.yield} ${plural(recipe.yield)} · ${formatNumber(s.qty)} receta(s) = ${formatNumber(units)} ${plural(units)}`;
 
   const costPerUnit = totalCost / units;
   const netPerUnit = sellPrice * (1 - taxRate);
@@ -2298,43 +2547,121 @@ function updateConsumableVerdict({ settings: s, totalCost, taxRate, profit, unit
 }
 
 // ---------- Selectores ----------
+// Sub-pestaña → Categoría (Tortillas) → Comida concreta (T3 · Tortilla de cangrejo de río abajo) → encantamiento.
 makeButtonGroup($("cons-category"), CONSUMABLE_TABS, consumables.tab, (tab) => {
   consumables.tab = tab;
-  renderConsumableOptions();
-  consumables.family = consItemSelect.value;
-  onConsumableFamilyChange();
+  renderConsumableCategories();
+  consumables.category = consItemSelect.value;
+  updateConsumableBonusCity();
+  onConsumableCategoryChange();
 });
 
-function renderConsumableOptions() {
+function renderConsumableCategories() {
   consItemSelect.innerHTML = "";
-  CONSUMABLE_FAMILIES.filter((f) => f.tab === consumables.tab).forEach((f) =>
-    consItemSelect.add(new Option(`${f.name} — ${f.effect}`, f.code))
-  );
-  consItemSelect.value = consumables.family;
+  const seen = new Set();
+  CONSUMABLE_FAMILIES.filter((f) => f.tab === consumables.tab).forEach((f) => {
+    const category = familyCategory(f);
+    if (seen.has(category)) return;
+    seen.add(category);
+    const effects = new Set(categoryFamilies(f.tab, category).map((x) => x.effect));
+    // Si todas las recetas dan el mismo efecto se muestra junto a la categoría (en "Otros" cada una es distinta).
+    consItemSelect.add(new Option(effects.size === 1 ? `${category} — ${f.effect}` : category, category));
+  });
+  consItemSelect.value = consumables.category;
+  if (consItemSelect.selectedIndex < 0) consItemSelect.selectedIndex = 0; // la categoría era de la otra sub-pestaña
 }
 
-// Tiers disponibles de la familia (ej: sopas T1/T3/T5, guisos T4/T6/T8).
-function renderConsumableTiers() {
-  const { tiers } = currentFamily();
-  if (!tiers.includes(consumables.tier)) consumables.tier = tiers[tiers.length - 1];
-  makeButtonGroup($("cons-tier"), tiers.map((t) => ({ label: `T${t}`, value: t })), consumables.tier, (t) => {
-    consumables.tier = t;
+// Todas las recetas de la categoría ordenadas por tier (value = "MEAL_OMELETTE_FISH|5").
+function renderConsumableRecipes() {
+  const recipes = categoryFamilies(consumables.tab, consumables.category)
+    .flatMap((f) => f.tiers.map((tier) => ({ family: f.code, tier, name: CONSUMABLE_RECIPES[`T${tier}_${f.code}`].name })))
+    .sort((x, y) => x.tier - y.tier);
+  consRecipeSelect.innerHTML = "";
+  recipes.forEach((r) => consRecipeSelect.add(new Option(`T${r.tier} · ${r.name}`, `${r.family}|${r.tier}`)));
+
+  // Se conserva la receta si sigue en la lista; si no, la normal del mismo tier o la normal de mayor tier.
+  const normal = recipes.filter((r) => r.family === recipes[0].family);
+  const pick =
+    recipes.find((r) => r.family === consumables.family && r.tier === consumables.tier) ||
+    normal.find((r) => r.tier === consumables.tier) ||
+    normal[normal.length - 1];
+  consRecipeSelect.value = `${pick.family}|${pick.tier}`;
+  consumables.family = pick.family;
+  consumables.tier = pick.tier;
+  $("cons-recipe-label").textContent = consumables.tab === "cooking" ? "Comida" : "Poción";
+}
+
+function updateConsumableRecipeHint() {
+  const family = currentFamily();
+  const recipe = CONSUMABLE_RECIPES[currentRecipeId()];
+  const raw = recipe.ingredients.map(([id, count]) => `${count} × ${INGREDIENT_NAMES[id]}`).join(", ");
+  consRecipeSelect.title = raw;
+  $("cons-recipe-hint").textContent = `Efecto: ${family.effect}. Receta: ${raw}.`;
+}
+
+// Encantamientos .1-.3 de las comidas: misma receta + salsa de pescado. Se oculta si la familia no tiene.
+function renderConsumableEnchants() {
+  const max = currentFamily().enchants || 0;
+  consEnchantField.classList.toggle("hidden", max === 0);
+  if (consumables.enchant > max) consumables.enchant = 0;
+  makeButtonGroup($("cons-enchant"), enchantOptions().filter((o) => o.value <= max), consumables.enchant, (e) => {
+    consumables.enchant = e;
+    updateConsumableEnchantHint();
     calculators.consumables.refresh();
   });
+  updateConsumableEnchantHint();
 }
 
-function onConsumableFamilyChange() {
-  renderConsumableTiers();
+function updateConsumableEnchantHint() {
+  const { enchant } = consumables;
+  const recipe = CONSUMABLE_RECIPES[currentRecipeId()];
+  consEnchantHint.textContent = enchant > 0
+    ? `Lleva ${recipe.sauce} × ${INGREDIENT_NAMES[`T1_FISHSAUCE_LEVEL${enchant}`]} por receta, además de los ingredientes normales.`
+    : "";
+}
+
+// La ciudad con bono depende de la sub-pestaña: se muestra en el selector de RRR y debajo.
+function updateConsumableBonusCity() {
+  const city = CONSUMABLE_BONUS_CITY[consumables.tab];
+  const kind = consumables.tab === "cooking" ? "cocina" : "alquimia";
+  const labels = {
+    "0.248": `24.8% — ${city} (bono de ${kind})`,
+    "0.479": `47.9% — ${city} + Foco`,
+  };
+  [...calculators.consumables.ui.rrr.options].forEach((o) => {
+    if (labels[o.value]) o.textContent = labels[o.value];
+  });
+  consBonusCity.textContent = `Ciudad con bono de ${kind}: ${city} (+15%). En otras ciudades usa las opciones "sin bono".`;
+}
+
+function onConsumableRecipeChange() {
+  updateConsumableRecipeHint();
+  renderConsumableEnchants();
   calculators.consumables.refresh();
 }
 
+function onConsumableCategoryChange() {
+  renderConsumableRecipes();
+  onConsumableRecipeChange();
+}
+
 consItemSelect.addEventListener("change", () => {
-  consumables.family = consItemSelect.value;
-  onConsumableFamilyChange();
+  consumables.category = consItemSelect.value;
+  onConsumableCategoryChange();
 });
 
-renderConsumableOptions();
-renderConsumableTiers();
+consRecipeSelect.addEventListener("change", () => {
+  const [family, tier] = consRecipeSelect.value.split("|");
+  consumables.family = family;
+  consumables.tier = Number(tier);
+  onConsumableRecipeChange();
+});
+
+renderConsumableCategories();
+renderConsumableRecipes();
+updateConsumableRecipeHint();
+renderConsumableEnchants();
+updateConsumableBonusCity();
 
 // ---------- Especialización y foco ----------
 const consSpec = createSpecPanel("cons", () => calculators.consumables.recalc());
@@ -2342,13 +2669,17 @@ const consSpec = createSpecPanel("cons", () => calculators.consumables.recalc())
 function updateConsumableSpec({ units }) {
   const family = currentFamily();
   const isCooking = family.tab === "cooking";
-  consSpec.render(`cons:${family.code}`, [
+  // Las variantes (avaloniana, de pescado) usan la especialización de su plato: la clave es la familia normal.
+  // En "Otros" cada receta es distinta, así que va por familia.
+  const category = familyCategory(family);
+  const specFamily = category === "Otros" ? family : categoryFamilies(family.tab, category)[0];
+  consSpec.render(`cons:${specFamily.code}`, [
     { key: "mastery", label: isCooking ? "Maestría Chef" : "Maestría Alquimista" },
-    { key: "spec", label: `Espec. ${family.name}` },
+    { key: "spec", label: `Espec. ${specFamily.name}` },
     { key: "others", label: "Otras espec. (suma)", max: SPEC_OTHERS_MAX },
   ]);
   consSpec.show({
-    base: CONSUMABLE_FOCUS[currentConsumableId()],
+    base: consumableFocus(),
     fce: specFce(SPEC_NODES.simple, {
       mastery: consSpec.level("mastery"),
       spec: consSpec.level("spec"),
@@ -2485,6 +2816,420 @@ butchAnimalSelect.addEventListener("change", () => {
   calculators.butcher.refresh();
 });
 renderButcherLocations();
+
+// ============================================================
+//  PESTAÑA: PESCA (todos los peces y dónde salen)
+// ============================================================
+// Filtros por agua, tipo y texto. Si se elige una zona (y su tier) se ordena por la probabilidad en esa zona.
+const fishing = { water: "all", kind: "all", search: "", zone: "", zoneTier: 0, bait: "T1_FISHINGBAIT", prices: {}, priceKey: null, request: null };
+
+const fishList = $("fish-list");
+const fishStatus = $("fish-status");
+const fishZone = $("fish-zone");
+const fishZoneTier = $("fish-zone-tier");
+const fishCity = $("fish-city");
+
+// Texto sin tildes para el buscador.
+const plainText = (text) => text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+const formatPct = (p) => `${formatNumber(p)}%`;
+
+// Recetas de cocina que usan cada ingrediente (para "Se usa en").
+const FISH_USES = {};
+Object.values(CONSUMABLE_RECIPES).forEach((recipe) =>
+  recipe.ingredients.forEach(([id]) => (FISH_USES[id] ||= []).push(recipe.name))
+);
+
+// Probabilidad del pez en la zona elegida: bioma + tier, o el mejor tier del bioma si no se elige.
+function fishZoneChance(fish) {
+  const tiers = fish.zones[fishing.zone];
+  if (!tiers) return 0;
+  if (fishing.zoneTier) return tiers[fishing.zoneTier] || 0;
+  return Math.max(...Object.values(tiers));
+}
+
+// Filas de "Dónde pescarlo". Si sale igual en los 7 biomas de agua dulce se agrupa en una sola fila
+// (con margen de 1,5 puntos: en Tierras Ancestrales sale un poco menos por los objetos de lore).
+function fishZoneRows(fish) {
+  const same = (a, b) => {
+    const [x, y] = [fish.zones[a], fish.zones[b]];
+    const tiers = Object.keys(x);
+    return tiers.join() === Object.keys(y).join() && tiers.every((t) => Math.abs(x[t] - y[t]) <= 1.5);
+  };
+  const freshAll = FRESHWATER_BIOMES.every((b) => fish.zones[b] && same(b, FRESHWATER_BIOMES[0]));
+  const rows = [];
+  if (freshAll) {
+    rows.push({ icon: "💧", name: "Cualquier río o lago", where: "todos los biomas de agua dulce", biomes: FRESHWATER_BIOMES, tiers: fish.zones[FRESHWATER_BIOMES[0]] });
+  }
+  Object.keys(fish.zones)
+    .filter((b) => !(freshAll && FRESHWATER_BIOMES.includes(b)))
+    .forEach((b) => rows.push({ ...FISHING_BIOMES[b], biomes: [b], tiers: fish.zones[b] }));
+  // Primero donde más sale.
+  const best = (r) => Math.max(...Object.values(r.tiers));
+  return rows.sort((x, y) => best(y) - best(x));
+}
+
+function fishCard(fish) {
+  const card = document.createElement("article");
+  card.className = `card fish-card kind-${fish.kind}`;
+
+  const rows = fishZoneRows(fish)
+    .map((r) => {
+      const home = r.biomes.includes(fish.biome) ? ' <span class="fish-home">★ su bioma</span>' : "";
+      const inZone = r.biomes.includes(fishing.zone);
+      const tiers = Object.entries(r.tiers)
+        .map(([t, p]) => {
+          const hit = inZone && Number(t) === fishing.zoneTier ? " hit" : "";
+          // Puntos con los colores de zona donde existe ese tier (no aplica en Ávalon ni en Tierras Ancestrales).
+          const colored = !r.biomes.every((b) => NO_ZONE_COLOR_BIOMES.includes(b));
+          const dots = colored ? TIER_ZONE_COLORS[t].map((c) => `<i class="zone-dot ${c}"></i>`).join("") : "";
+          const title = colored ? ` title="Zona ${zoneColorNames(t)}"` : "";
+          return `<span class="fish-tier${hit}"${title}>${dots}T${t} <b>${formatPct(p)}</b></span>`;
+        })
+        .join("");
+      return `<li class="${inZone ? "in-zone" : ""}"><div class="fish-zone-name">${r.icon} <b>${r.name}</b> <span class="muted">· ${r.where}</span>${home}</div><div class="fish-tiers">${tiers}</div></li>`;
+    })
+    .join("");
+
+  const spots = Object.entries(fish.spots)
+    .sort((a, b) => b[1] - a[1])
+    .map(([place, p]) => `${place} <b>${formatPct(p)}</b>`)
+    .join(" · ");
+
+  const price = fishing.prices[fish.id];
+  const priceText = !fishing.priceKey
+    ? '<span class="muted">cargando…</span>'
+    : price && (price.sell || price.buy)
+      ? `venta <b>${price.sell ? formatSilver(price.sell) : "—"}</b> · compra <b>${price.buy ? formatSilver(price.buy) : "—"}</b>`
+      : '<span class="muted">sin datos en la API</span>';
+
+  const uses = FISH_USES[fish.id];
+  const zoneChance = fishing.zone ? fishZoneChance(fish) : null;
+  const water = { fresh: "💧 Agua dulce", salt: "🌊 Océano", both: "💧🌊 Ambas" }[fish.water];
+
+  card.innerHTML = `
+    <div class="fish-head">
+      <img src="${RENDER_URL(fish.id, 64)}" alt="" loading="lazy">
+      <div>
+        <h3>${fish.name}</h3>
+        <div class="fish-badges">
+          <span class="chip">T${fish.tier}</span>
+          <span class="chip kind">${FISH_KINDS[fish.kind]}</span>
+          <span class="chip">${water}</span>
+          ${zoneChance !== null ? `<span class="chip focus"><b>${formatPct(zoneChance)}</b> en tu zona</span>` : ""}
+        </div>
+      </div>
+    </div>
+    ${fish.kind === "extra" ? '<p class="hint">Sale de regalo al pescar cualquier pez: el % es la probabilidad por captura.</p>' : ""}
+    ${rows ? `<ul class="fish-zones">${rows}</ul>` : ""}
+    ${spots ? `<p class="fish-meta"><span class="filter-label">Sitios fijos</span> ${spots}</p>` : ""}
+    <p class="fish-meta"><span class="filter-label">Mercado (${fishCity.value})</span> ${priceText}</p>
+    ${uses ? `<p class="fish-meta"><span class="filter-label">Se usa en</span> ${uses.join(", ")}</p>` : ""}
+    <code class="fish-id">${fish.id}</code>`;
+  return card;
+}
+
+function renderFish() {
+  const query = plainText(fishing.search.trim());
+  const special = (f) => f.kind === "boss" || f.kind === "extra";
+  let list = FISH_DATA.filter((f) =>
+    (fishing.water === "all" || f.water === fishing.water || f.water === "both") &&
+    (fishing.kind === "all" || f.kind === fishing.kind || (fishing.kind === "special" && special(f))) &&
+    (!query || plainText(`${f.name} ${f.id}`).includes(query))
+  );
+  if (fishing.zone) {
+    // El alga es un extra (sale además del pez), así que va al final.
+    const rank = (f) => (f.kind === "extra" ? -1 : fishZoneChance(f));
+    list = list.filter((f) => fishZoneChance(f) > 0).sort((a, b) => rank(b) - rank(a));
+  }
+  fishList.innerHTML = "";
+  list.forEach((f) => fishList.appendChild(fishCard(f)));
+
+  renderBait(); // el pez objetivo depende de la zona y el tier
+
+  const zone = FISHING_BIOMES[fishing.zone];
+  setStatus(fishStatus, !list.length
+    ? "No hay peces con esos filtros."
+    : zone
+      ? `${list.length} pez(es) en ${zone.name}${fishing.zoneTier ? ` T${fishing.zoneTier}` : " (mejor tier de cada uno)"}, de más a menos probable.`
+      : `${list.length} pez(es).`);
+}
+
+// ---------- Cebo, especialización y comida: cuánto más rápido pican y cuántos peces sacas ----------
+// Suposiciones (el juego no publica el tiempo base de espera):
+//   · Las velocidades se suman y dividen la espera: espera = espera_actual × (1 + vel_actual) ÷ (1 + vel_total).
+//     "espera_actual" es la que mide el usuario con su especialización, sin cebo ni comida.
+//   · El rendimiento es la probabilidad de doble captura: peces por captura = 1 + rendimiento.
+//   · Nada de esto cambia la probabilidad de cada pez (las tablas de loot.xml son fijas).
+const FISH_LEVEL_KEYS = { master: "fish:master", spec: "fish:spec" };
+
+function readFishLevel(key) {
+  try {
+    return Math.min(100, Math.max(0, Number(localStorage.getItem(FISH_LEVEL_KEYS[key])) || 0));
+  } catch {
+    return 0;
+  }
+}
+
+function saveFishLevel(key, value) {
+  try {
+    localStorage.setItem(FISH_LEVEL_KEYS[key], value);
+  } catch {
+    // sin almacenamiento (modo privado): solo se pierde el valor al recargar
+  }
+}
+
+// Equipo de pescador elegido: { rod: "avalon:7" | "", head: 6, armor: 6, shoes: 6, bag: 6, stacks: 10 }.
+function fishGear() {
+  const tier = (id) => Number($(id).value) || 0;
+  return {
+    rod: $("fish-gear-rod").value,
+    head: tier("fish-gear-head"),
+    armor: tier("fish-gear-armor"),
+    shoes: tier("fish-gear-shoes"),
+    bag: tier("fish-gear-bag"),
+    stacks: Math.min(GEAR_MAX_STACKS, Math.max(0, Number($("fish-gear-stacks").value) || 0)),
+  };
+}
+
+// Rendimiento del equipo para un pez de cierto tier: cada pieza solo cuenta si el pez es de su tier o menor.
+function fishGearYield(fishTier) {
+  const gear = fishGear();
+  const parts = [];
+  Object.entries(FISHING_GEAR).forEach(([slot, piece]) => {
+    const tier = gear[slot];
+    if (!tier) return;
+    const value = fishTier <= tier ? piece.perStack[tier] * gear.stacks : 0;
+    parts.push({ name: `${piece.name} T${tier}`, value, maxTier: tier });
+  });
+  if (gear.rod) {
+    const tier = Number(gear.rod);
+    parts.push({ name: `Caña avaloniana T${tier}`, value: fishTier <= tier ? AVALON_ROD_YIELD[tier] : 0, maxTier: tier });
+  }
+  return { total: parts.reduce((sum, p) => sum + p.value, 0), parts };
+}
+
+// Bonos de la especialización (fracción, ej. 0,33 = +33%).
+function fishSpecBonus() {
+  const master = Number($("fish-lvl-master").value) || 0;
+  const spec = Number($("fish-lvl-spec").value) || 0;
+  return {
+    speed: master * FISHING_SPEC.master.speed + spec * FISHING_SPEC.spec.speed,
+    yield: master * FISHING_SPEC.master.yield + spec * FISHING_SPEC.spec.yield,
+    power: master * FISHING_SPEC.master.power + spec * FISHING_SPEC.spec.power,
+  };
+}
+
+// Pez objetivo: los que salen en la zona y tier elegidos arriba (si no hay tier, el mejor de cada pez).
+function renderFishTargets() {
+  const select = $("fish-target");
+  const previous = select.value;
+  select.innerHTML = "";
+  if (!fishing.zone) {
+    select.add(new Option("Elige arriba dónde vas a pescar", ""));
+    select.disabled = true;
+    return;
+  }
+  select.disabled = false;
+  FISH_DATA.filter((f) => fishZoneChance(f) > 0 && f.kind !== "extra")
+    .sort((a, b) => fishZoneChance(b) - fishZoneChance(a))
+    .forEach((f) => select.add(new Option(`${f.name} (T${f.tier}) — ${formatPct(fishZoneChance(f))}`, f.id)));
+  if ([...select.options].some((o) => o.value === previous)) select.value = previous;
+}
+
+function renderBait() {
+  const bait = FISHING_BAITS.find((b) => b.id === fishing.bait);
+  const food = FISHING_FOODS.find((f) => f.id === $("fish-food").value);
+  const spec = fishSpecBonus();
+  const speed = spec.speed + bait.speed + food.speed;
+
+  // El equipo solo cuenta para peces de su tier o menor: se calcula para el pez objetivo
+  // (sin objetivo, para un pez T1, o sea, con todas las piezas activas).
+  renderFishTargets();
+  const target = FISH_DATA.find((f) => f.id === $("fish-target").value);
+  const gear = fishGearYield(target ? target.tier : 1);
+  const gearInfo = fishGear();
+  const yieldBonus = spec.yield + food.yield + gear.total;
+  const factor = (1 + speed) / (1 + spec.speed); // cuánto más rápido que ahora (con tu especialización, sin cebo ni comida)
+  const price = fishing.prices[bait.id]?.sell;
+  const worm = fishing.prices.T1_WORM?.sell;
+  const pct = (x) => `${formatNumber(x * 100)}%`;
+
+  // --- Resumen de bonos ---
+  $("bait-chips").innerHTML = [
+    `<span class="chip focus">Velocidad total <b>+${pct(speed)}</b></span>`,
+    `<span class="chip focus">Rendimiento (doble captura) <b>+${pct(yieldBonus)}</b>${yieldBonus > 1 ? " · ≈ " + formatNumber(1 + yieldBonus) + " peces por captura" : ""}</span>`,
+    `<span class="chip">Especialización: <b>+${pct(spec.speed)}</b> vel. · <b>+${pct(spec.yield)}</b> doble · <b>+${formatNumber(spec.power)}</b> poder</span>`,
+    bait.speed ? `<span class="chip">${bait.name}: <b>+${pct(bait.speed)}</b> vel. · ${BAIT_CHARGES} capturas o ${BAIT_DURATION_MIN} min</span>` : "",
+    food.speed || food.yield ? `<span class="chip">${food.name}: <b>${food.speed ? `+${pct(food.speed)} vel.` : `+${pct(food.yield)} doble`}</b></span>` : "",
+    gear.parts.length
+      ? `<span class="chip">Equipo (${gearInfo.stacks} carga${gearInfo.stacks === 1 ? "" : "s"}${target ? `, para ${target.name} T${target.tier}` : ""}): <b>+${pct(gear.total)}</b> doble` +
+        ` <span class="muted">(${gear.parts.map((p) => `${p.name} ${p.value ? `+${pct(p.value)}` : `no aplica a T${target.tier}`}`).join(" · ")})</span></span>`
+      : "",
+    gearInfo.bag ? `<span class="chip">Mochila T${gearInfo.bag}: peces hasta T${gearInfo.bag} pesan <b>−${pct(FISH_BAG_WEIGHT[gearInfo.bag])}</b></span>` : "",
+    gear.parts.some((p) => !p.name.startsWith("Caña")) && gearInfo.stacks < GEAR_MAX_STACKS
+      ? `<span class="chip">Llegas a ${GEAR_MAX_STACKS} cargas tras ≈ ${formatNumber(((GEAR_MAX_STACKS - 1) * GEAR_STACK_SECONDS) / 60)} min con el equipo puesto</span>`
+      : "",
+    bait.speed ? `<span class="chip">Cebo en ${fishCity.value}: <b>${price ? formatSilver(price) : "sin datos"}</b>${price ? ` (≈ ${formatSilver(price / BAIT_CHARGES)} por captura)` : ""}</span>` : "",
+    bait.speed && worm ? `<span class="chip">Fabricarlo: ${bait.worms} × lombriz (${formatSilver(worm)}) ≈ <b>${formatSilver(worm * bait.worms)}</b></span>` : "",
+  ].join("");
+
+  // --- Espera ---
+  const wait = Number($("bait-wait").value);
+  const newWait = wait / factor;
+  $("bait-result").innerHTML = !wait
+    ? '<span class="muted">Escribe cuántos segundos tardan en picar ahora (con tu especialización y tu equipo, sin cebo ni comida) y te calculo la espera con los bonos.</span>'
+    : factor > 1
+      ? `Cada picada pasa de ${formatNumber(wait)} s a ≈ <b>${formatNumber(newWait)} s</b> (${formatNumber(factor)}× más rápido).`
+      : `Sin cebo ni comida de velocidad la espera sigue en ${formatNumber(wait)} s.`;
+
+  // --- Pez objetivo ---
+  const out = $("fish-target-result");
+  if (!target) {
+    out.innerHTML = '<span class="muted">Elige zona y tier en los filtros de arriba y luego el pez que buscas.</span>';
+    return;
+  }
+  const p = fishZoneChance(target) / 100;
+  const tierText = fishing.zoneTier ? `T${fishing.zoneTier}` : `su mejor tier (T${Object.entries(target.zones[fishing.zone]).sort((a, b) => b[1] - a[1])[0][0]})`;
+  // "Ahora" = con tu especialización y tu equipo, sin cebo ni comida (lo que mide el usuario).
+  const perCatchNow = p * (1 + spec.yield + gear.total);
+  const perCatch = p * (1 + yieldBonus);
+  const lines = [
+    `En <b>${FISHING_BIOMES[fishing.zone].name} ${tierText}</b>, cada captura tiene un <b>${formatPct(p * 100)}</b> de ser <b>${target.name}</b>. ` +
+      `<span class="muted">Esto no lo cambian ni el cebo, ni la especialización, ni la comida.</span>`,
+    `Hacen falta de media <b>${formatNumber(1 / p)}</b> capturas para que salga uno.`,
+    `Con <b>+${pct(yieldBonus)}</b> de rendimiento${yieldBonus > 1 ? " (más de 100%: se asume que el exceso sigue sumando peces)" : ""} sacas ≈ <b>${formatNumber(perCatch * 100)}</b> por cada 100 capturas` +
+      (food.yield ? ` (sin la comida serían ${formatNumber(perCatchNow * 100)}).` : ".") +
+      (gear.parts.length && !gear.total ? ` <span class="muted">Tu equipo es de tier menor que este pez, así que no suma.</span>` : ""),
+  ];
+  if (wait) {
+    const perHourNow = (3600 / wait) * perCatchNow;
+    const perHour = (3600 / newWait) * perCatch;
+    lines.push(
+      `Contando solo la espera hasta que pica: ahora ≈ <b>${formatNumber(perHourNow)}</b> por hora → con los bonos ≈ <b>${formatNumber(perHour)}</b> por hora ` +
+        `(<b>+${formatNumber((perHour / perHourNow - 1) * 100)}%</b>). Uno cada ≈ ${formatNumber(newWait / perCatch / 60)} min.`
+    );
+  }
+  out.innerHTML = lines.map((l) => `<p>${l}</p>`).join("");
+}
+
+makeButtonGroup($("fish-bait"), FISHING_BAITS.map((b) => ({ label: b.name, value: b.id, icon: b.id || undefined })), fishing.bait, (v) => {
+  fishing.bait = v;
+  renderBait();
+});
+
+FISHING_FOODS.forEach((f) => {
+  const option = new Option(f.name, f.id);
+  const group = f.group && [...$("fish-food").children].find((g) => g.label === f.group);
+  if (!f.group) return $("fish-food").add(option);
+  if (group) return group.appendChild(option);
+  const optgroup = document.createElement("optgroup");
+  optgroup.label = f.group;
+  optgroup.appendChild(option);
+  $("fish-food").appendChild(optgroup);
+});
+
+// Selects del equipo: "Ninguno" + T4-T8 (caña: normal o avaloniana). Se recuerdan en localStorage.
+const GEAR_TIERS = [4, 5, 6, 7, 8];
+$("fish-gear-rod").add(new Option("Normal (sin pasiva)", ""));
+GEAR_TIERS.forEach((t) => $("fish-gear-rod").add(new Option(`Aval. T${t} (+${formatNumber(AVALON_ROD_YIELD[t] * 100)}%)`, t)));
+["head", "armor", "shoes", "bag"].forEach((slot) => {
+  const select = $(`fish-gear-${slot}`);
+  select.add(new Option("Ninguno", ""));
+  GEAR_TIERS.forEach((t) => {
+    const bonus = slot === "bag"
+      ? `−${formatNumber(FISH_BAG_WEIGHT[t] * 100)}% peso`
+      : `+${formatNumber(FISHING_GEAR[slot].perStack[t] * GEAR_MAX_STACKS * 100)}%`; // al máximo de cargas
+    select.add(new Option(`T${t} (${bonus})`, t));
+  });
+});
+["rod", "head", "armor", "shoes", "bag", "stacks"].forEach((slot) => {
+  const el = $(`fish-gear-${slot}`);
+  try {
+    const saved = localStorage.getItem(`fish:gear:${slot}`);
+    if (saved !== null) el.value = saved;
+  } catch {
+    // sin almacenamiento: valores por defecto
+  }
+  el.addEventListener(slot === "stacks" ? "input" : "change", () => {
+    try {
+      localStorage.setItem(`fish:gear:${slot}`, el.value);
+    } catch {
+      // sin almacenamiento
+    }
+    renderBait();
+  });
+});
+
+["master", "spec"].forEach((key) => {
+  const input = $(`fish-lvl-${key}`);
+  input.value = readFishLevel(key);
+  input.addEventListener("input", () => {
+    saveFishLevel(key, input.value);
+    renderBait();
+  });
+});
+["bait-wait", "fish-food", "fish-target"].forEach((id) => $(id).addEventListener(id === "bait-wait" ? "input" : "change", renderBait));
+
+// Precios de todos los peces de una vez en la ciudad elegida (venta = sell_price_min, compra = buy_price_max).
+async function loadFishPrices() {
+  const key = `${regionSelect.value}|${fishCity.value}`;
+  if (key === fishing.priceKey) return;
+  fishing.request?.abort();
+  const request = (fishing.request = new AbortController());
+  fishing.priceKey = null;
+  renderFish();
+  try {
+    const ids = [...FISH_DATA.map((f) => f.id), ...FISHING_BAITS.filter((b) => b.id).map((b) => b.id), "T1_WORM"];
+    const rows = await fetchPrices(ids, { locations: [fishCity.value], qualities: 1 }, request.signal);
+    fishing.prices = {};
+    rows.forEach((r) => (fishing.prices[r.item_id] = { sell: r.sell_price_min, buy: r.buy_price_max }));
+    fishing.priceKey = key;
+    renderFish();
+    renderBait();
+  } catch (err) {
+    if (err.name === "AbortError") return;
+    setStatus(fishStatus, `No se pudieron cargar los precios: ${err.message}`, true);
+  }
+}
+
+makeButtonGroup($("fish-water"), [
+  { label: "Todas", value: "all" },
+  { label: "💧 Agua dulce", value: "fresh" },
+  { label: "🌊 Océano", value: "salt" },
+], fishing.water, (v) => { fishing.water = v; renderFish(); });
+
+makeButtonGroup($("fish-kind"), [
+  { label: "Todos", value: "all" },
+  { label: "Comunes", value: "common" },
+  { label: "Raros", value: "rare" },
+  { label: "Tiburón y alga", value: "special" },
+], fishing.kind, (v) => { fishing.kind = v; renderFish(); });
+
+fishZone.add(new Option("Cualquier zona", ""));
+Object.entries(FISHING_BIOMES).forEach(([key, b]) => fishZone.add(new Option(`${b.icon} ${b.name} (${b.where})`, key)));
+fishZoneTier.add(new Option("Cualquier tier", "0"));
+[1, 2, 3, 4, 5, 6, 7, 8].forEach((t) => {
+  const emojis = TIER_ZONE_COLORS[t].map((c) => ZONE_COLORS[c].emoji).join("");
+  fishZoneTier.add(new Option(`T${t} ${emojis} zona ${zoneColorNames(t)}`, t));
+});
+$("fish-legend").innerHTML =
+  Object.entries(ZONE_COLORS).map(([c, z]) => `<span><i class="zone-dot ${c}"></i>Zona ${z.name}</span>`).join("") +
+  '<span class="muted">El color no cambia los peces, solo el riesgo. Ávalon y Tierras Ancestrales van aparte.</span>';
+fillSelect(fishCity, CITIES, "Caerleon");
+
+$("fish-search").addEventListener("input", (e) => { fishing.search = e.target.value; renderFish(); });
+fishZone.addEventListener("change", () => { fishing.zone = fishZone.value; renderFish(); });
+fishZoneTier.addEventListener("change", () => { fishing.zoneTier = Number(fishZoneTier.value); renderFish(); });
+fishCity.addEventListener("change", loadFishPrices);
+
+$("fish-hint").textContent =
+  "El % es la probabilidad de que cada captura sea ese pez, según las tablas del juego (loot.xml). " +
+  "Los raros salen sobre todo en su bioma (★), pero también en dos biomas vecinos. " +
+  "En mazmorras, el agua dulce da lo mismo que la Montaña y el agua salada lo mismo que el Océano.";
+
+// showTab y el cambio de región llaman a refresh(): así los precios se cargan al abrir la pestaña.
+calculators.fishing = { refresh: loadFishPrices };
+renderFish();
 
 // ============================================================
 //  INICIO

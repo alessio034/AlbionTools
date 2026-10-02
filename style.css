@@ -44,7 +44,7 @@ input, select, button { font-family: inherit; }
 }
 
 .navbar-inner {
-  max-width: 1400px; /* más ancha que el contenido para que quepan las 7 pestañas y el servidor */
+  max-width: 1400px; /* más ancha que el contenido para que quepan las 8 pestañas y el servidor */
   margin: 0 auto;
   padding: 10px 16px;
   display: flex;
@@ -570,14 +570,125 @@ footer {
   font-size: .85rem;
 }
 
+/* ===== Pesca ===== */
+.fish-filters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  align-items: start;
+}
+.fish-filters .filter-btn { padding: 7px 11px; font-size: .85rem; }
+#fish-hint { display: block; margin-top: 12px; }
+
+.fish-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr));
+  gap: 14px;
+}
+.fish-card { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.fish-card.kind-rare { border-color: color-mix(in srgb, var(--ench-2) 45%, var(--border)); }
+.fish-card.kind-boss { border-color: color-mix(in srgb, var(--error) 55%, var(--border)); }
+.fish-card.kind-rare .chip.kind { color: var(--ench-2); border-color: var(--ench-2); }
+.fish-card.kind-boss .chip.kind { color: var(--error); border-color: var(--error); }
+
+.fish-head { display: flex; align-items: center; gap: 12px; }
+.fish-head img { width: 56px; height: 56px; flex: 0 0 auto; }
+.fish-head h3 { margin: 0 0 6px; font-size: 1.05rem; color: var(--accent); }
+.fish-badges { display: flex; flex-wrap: wrap; gap: 6px; }
+.fish-badges .chip { padding: 3px 9px; font-size: .78rem; }
+
+.fish-zones { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.fish-zones li {
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+}
+.fish-zones li.in-zone { border-color: var(--accent); }
+.fish-zone-name { font-size: .88rem; margin-bottom: 6px; }
+.fish-home { color: var(--accent); font-size: .78rem; font-weight: 700; }
+.fish-tiers { display: flex; flex-wrap: wrap; gap: 4px; }
+.fish-tier {
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  font-size: .76rem;
+  color: var(--muted);
+}
+.fish-tier b { color: var(--text); font-weight: 600; }
+.fish-tier.hit { border-color: var(--accent); background: var(--accent); color: #111; }
+.fish-tier.hit b { color: #111; }
+
+/* Panel de cebo */
+.bait-card { margin-bottom: 16px; display: flex; flex-direction: column; gap: 12px; }
+.bait-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+.bait-head h3 { margin: 0; color: var(--accent); font-size: 1.05rem; }
+.bait-head .filter-btn { padding: 7px 11px; font-size: .85rem; }
+.bait-fields { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; align-items: end; }
+.bait-result { margin: 0; font-size: .92rem; }
+.gear-fields {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px dashed var(--border);
+}
+.gear-title { grid-column: 1 / -1; }
+@media (max-width: 900px) { .gear-fields { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .gear-fields { grid-template-columns: 1fr 1fr; } }
+.bait-target {
+  display: grid;
+  grid-template-columns: minmax(0, 340px) 1fr;
+  gap: 14px;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+}
+.bait-target-result p { margin: 0 0 6px; font-size: .92rem; }
+.bait-target-result p:last-child { margin-bottom: 0; }
+@media (max-width: 900px) { .bait-fields { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 700px) { .bait-fields, .bait-target { grid-template-columns: 1fr; } }
+
+/* Puntos de color de zona (azul, amarilla, roja, negra) */
+.zone-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  margin-right: 2px;
+  vertical-align: 0;
+}
+.zone-dot.blue { background: #4a90e2; }
+.zone-dot.yellow { background: #f2c94c; }
+.zone-dot.red { background: #e5484d; }
+.zone-dot.black { background: #000; box-shadow: 0 0 0 1px #8b93a3; }
+.fish-tier .zone-dot:last-of-type { margin-right: 5px; }
+.fish-tier.hit .zone-dot.black { box-shadow: 0 0 0 1px #111; }
+.zone-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 14px; font-size: .82rem; }
+.zone-legend .zone-dot { margin-right: 6px; }
+
+.fish-meta { margin: 0; font-size: .86rem; line-height: 1.5; }
+.fish-meta .filter-label { margin-right: 6px; }
+.fish-id { font-size: .72rem; color: var(--muted); }
+
+/* 8 pestañas: en pantallas medianas se compactan para que el servidor quepa en la misma línea */
+@media (max-width: 1400px) {
+  .nav-tabs { gap: 4px; }
+  .nav-btn { padding: 8px 8px; font-size: .86rem; }
+}
+
 @media (max-width: 900px) {
   .calc-grid { grid-template-columns: 1fr; }
+  .fish-filters { grid-template-columns: 1fr 1fr; }
 }
 
 @media (max-width: 600px) {
   .navbar-inner { gap: 8px; }
   .brand { font-size: 1.1rem; }
-  /* 7 pestañas: en móvil la barra se desplaza horizontalmente */
+  /* 8 pestañas: en móvil la barra se desplaza horizontalmente */
   .nav-tabs { order: 3; width: 100%; overflow-x: auto; scrollbar-width: none; }
   .nav-btn { flex: 0 0 auto; padding: 8px 10px; font-size: .85rem; white-space: nowrap; }
   .versus { grid-template-columns: 1fr; }
@@ -587,4 +698,5 @@ footer {
   .filter-btn { padding: 7px 10px; font-size: .85rem; }
   .item-header img { width: 64px; height: 64px; }
   .data-table th, .data-table td { padding: 10px 8px; font-size: .9rem; }
+  .fish-filters { grid-template-columns: 1fr; }
 }

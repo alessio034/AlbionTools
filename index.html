@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Albion Tools</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=20261002f">
 </head>
 <body>
   <!-- ===== Barra de navegación fija ===== -->
@@ -19,6 +19,7 @@
         <button type="button" class="nav-btn" data-tab="farming" role="tab">🌱 Cultivos</button>
         <button type="button" class="nav-btn" data-tab="consumables" role="tab">🧪 Consumibles</button>
         <button type="button" class="nav-btn" data-tab="butcher" role="tab">🔪 Carnicería</button>
+        <button type="button" class="nav-btn" data-tab="fishing" role="tab">🎣 Pesca</button>
       </div>
       <select id="region-select" title="Servidor">
         <option value="west">Americas (west)</option>
@@ -393,12 +394,18 @@
           <div id="cons-category" class="btn-group subcat"></div>
 
           <label class="field">
-            <span class="filter-label">Receta</span>
+            <span class="filter-label">Categoría</span>
             <select id="cons-item"></select>
           </label>
-          <div class="field">
-            <span class="filter-label">Tier</span>
-            <div id="cons-tier" class="btn-group"></div>
+          <label class="field">
+            <span class="filter-label" id="cons-recipe-label">Comida</span>
+            <select id="cons-recipe"></select>
+            <small id="cons-recipe-hint" class="hint"></small>
+          </label>
+          <div class="field" id="cons-enchant-field">
+            <span class="filter-label">Encantamiento</span>
+            <div id="cons-enchant" class="btn-group"></div>
+            <small id="cons-enchant-hint" class="hint"></small>
           </div>
 
           <label class="field">
@@ -411,6 +418,7 @@
             <span class="filter-label">Tasa de devolución (RRR)</span>
             <select id="cons-rrr"></select>
             <input type="number" id="cons-rrr-custom" class="hidden" min="0" max="99" step="0.1" placeholder="RRR en %, ej: 47.7">
+            <small id="cons-bonus-city" class="hint"></small>
           </label>
 
           <div class="toggles">
@@ -647,11 +655,91 @@
         </div>
       </div>
     </section>
+    <!-- ===================== PESCA ===================== -->
+    <section id="tab-fishing" class="tab-section">
+      <div class="card filters-card">
+        <div class="fish-filters">
+          <label class="field fish-search">
+            <span class="filter-label">Buscar pez</span>
+            <input type="text" id="fish-search" placeholder="Ej: cangrejo, anguila, kraken…" autocomplete="off">
+          </label>
+          <div class="field">
+            <span class="filter-label">Agua</span>
+            <div id="fish-water" class="btn-group"></div>
+          </div>
+          <div class="field">
+            <span class="filter-label">Tipo</span>
+            <div id="fish-kind" class="btn-group"></div>
+          </div>
+          <label class="field">
+            <span class="filter-label">¿Dónde vas a pescar?</span>
+            <select id="fish-zone"></select>
+          </label>
+          <label class="field">
+            <span class="filter-label">Tier de la zona</span>
+            <select id="fish-zone-tier"></select>
+          </label>
+          <label class="field">
+            <span class="filter-label">Precios en</span>
+            <select id="fish-city"></select>
+          </label>
+        </div>
+        <div id="fish-legend" class="zone-legend"></div>
+        <small id="fish-hint" class="hint"></small>
+      </div>
+      <div class="card bait-card">
+        <div class="bait-head">
+          <h3>🪱 Cebo, especialización y comida</h3>
+          <div id="fish-bait" class="btn-group"></div>
+        </div>
+        <div class="bait-fields">
+          <label class="field">
+            <span class="filter-label">Nivel de Pescador (0-100)</span>
+            <input type="number" id="fish-lvl-master" min="0" max="100" step="1">
+          </label>
+          <label class="field">
+            <span class="filter-label">Nivel de Especialista en pesca (0-100)</span>
+            <input type="number" id="fish-lvl-spec" min="0" max="100" step="1">
+          </label>
+          <label class="field">
+            <span class="filter-label">Comida</span>
+            <select id="fish-food"></select>
+          </label>
+          <label class="field">
+            <span class="filter-label">Espera actual sin cebo ni comida (s)</span>
+            <input type="number" id="bait-wait" min="1" step="0.5" placeholder="Ej: 20 (mídelo en el juego)">
+          </label>
+        </div>
+        <div class="gear-fields">
+          <span class="filter-label gear-title">🎣 Equipo de pescador</span>
+          <label class="field"><span class="filter-label">Caña</span><select id="fish-gear-rod"></select></label>
+          <label class="field"><span class="filter-label">Gorro</span><select id="fish-gear-head"></select></label>
+          <label class="field"><span class="filter-label">Atuendo</span><select id="fish-gear-armor"></select></label>
+          <label class="field"><span class="filter-label">Botas</span><select id="fish-gear-shoes"></select></label>
+          <label class="field"><span class="filter-label">Mochila</span><select id="fish-gear-bag"></select></label>
+          <label class="field"><span class="filter-label">Cargas (0-10)</span><input type="number" id="fish-gear-stacks" min="0" max="10" step="1" value="10"></label>
+        </div>
+        <div id="bait-chips" class="info-chips"></div>
+        <p id="bait-result" class="bait-result"></p>
+        <div class="bait-target">
+          <label class="field">
+            <span class="filter-label">🎯 Pez que quieres</span>
+            <select id="fish-target"></select>
+          </label>
+          <div id="fish-target-result" class="bait-target-result"></div>
+        </div>
+        <small class="hint">El cebo, la especialización y la comida <b>no cambian qué pez sale</b> (las tablas de loot.xml son fijas): solo hacen que piquen antes (velocidad) o que a veces saques 2 peces en una captura (rendimiento = doble captura). Por nivel: Pescador +0,16% velocidad y doble captura, +0,5 de poder; Especialista +0,33% y +2,5 de poder (wiki oficial). Cebos y comida: spells.xml. Equipo de pescador (spells.xml): gorro, atuendo y botas suman una carga de rendimiento cada 30 s mientras los llevas puestos, hasta 10 cargas (≈ 5 min), solo para peces de su tier o menor; la caña avaloniana da un bonus fijo y la mochila reduce el peso de los peces. El encantamiento no cambia estas pasivas. Cada cebo dura 10 capturas o 10 minutos; las lombrices salen al cosechar (pestaña Cultivos). El cálculo por hora solo cuenta la espera hasta que pica, no el minijuego.</small>
+      </div>
+      <p id="fish-status" class="status"></p>
+      <div id="fish-list" class="fish-grid"></div>
+    </section>
+
   </main>
 
   <footer class="muted">Datos: Albion Online Data Project · Los precios son editables en las calculadoras</footer>
 
-  <script src="market-data.js"></script>
-  <script src="script.js"></script>
+  <script src="market-data.js?v=20261002f"></script>
+  <script src="fishing-data.js?v=20261002f"></script>
+  <script src="script.js?v=20261002f"></script>
 </body>
 </html>
