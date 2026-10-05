@@ -383,6 +383,18 @@ td.empty { color: var(--muted); }
 
 .price-input { width: 110px !important; padding: 6px 8px !important; text-align: right; }
 .price-input.missing { border-color: var(--warn); }
+/* Selector de ciudad de compra de cada material, debajo de su precio */
+.price-cell .price-source {
+  display: block;
+  width: auto;
+  min-width: 110px;
+  max-width: 190px;
+  margin-top: 4px;
+  padding: 3px 4px;
+  font-size: .72rem;
+  color: var(--muted);
+}
+.bonus-city b { color: var(--accent); }
 
 .stats {
   display: grid;

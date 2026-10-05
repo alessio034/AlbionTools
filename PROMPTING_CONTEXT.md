@@ -21,7 +21,7 @@ Resumen técnico para retomar el proyecto en un chat nuevo. Leer esto antes de t
 |---|---|
 | **Mercado** | 3 niveles: pestaña (Armas, Secundarias, Armaduras, Accesorios, Recolección, Artefactos, Recursos, Materiales, Consumibles, Granja, Monturas) → subcategoría → ítem con icono. Datos en `MARKET_TABS` (`market-data.js`, **666 ítems**). Buscador por nombre sin tildes (máx. 60 resultados), Tier T1–T8 y Encantamiento; solo se activan los tiers y encantamientos que existen para el ítem. Admite un ID manual. |
 | **Refinamiento** | Recurso (madera/metal/cuero/tela/piedra), tier, encantamiento, RRR y Foco (enlazados). Materiales: brutos + 1 refinado del tier anterior. La piedra no se encanta. |
-| **Crafteo** | `CRAFT_ITEMS` = **155 armas y off-hands** de `CRAFT_WEAPONS` (normales y de artefacto ◆, una sección por línea) + armaduras, bolsas, capas y herramientas de `CATEGORIES`/`RECIPES`. Tier, encantamiento, RRR y tarifa de estación. El artefacto y los restos de criatura entran como materiales no retornables. |
+| **Crafteo** | `CRAFT_ITEMS` = **155 armas y off-hands** de `CRAFT_WEAPONS` (normales y de artefacto ◆, una sección por línea) + armaduras, bolsas, capas y herramientas de `CATEGORIES`/`RECIPES`. Tier, encantamiento, RRR y tarifa de estación. El artefacto y los restos de criatura entran como materiales no retornables. Bajo la RRR se indica la ciudad con bono del ítem (`CRAFT_BONUS`, ej. "★ Caerleon con bono de crafteo de Herramientas") y las opciones 24.8/47.9% llevan su nombre. |
 | **Crianza** | Sub-pestañas **Domésticos** / **Monturas Especiales** (optgroups Salvajes, Ciervos, Facción). Cría + comida → adulto. Si el animal se ensilla, un panel compara vender el adulto crudo vs. ensillarlo. Los chips de info muestran crecimiento en h y días, nutrición y **comida por día** (por animal y total). |
 | **Cultivos** | Sub-pestañas **Cultivos** / **Hierbas (alquimia)**. Semilla → cosecha. Ubicación con ★ en las ciudades de bono (+10%), riego con Foco, Premium (cosecha ×2) y "¿Ya tengo las semillas?". Muestra parcelas, cosecha, lombrices y semillas recuperadas. |
 | **Consumibles** | Sub-pestañas **Cocina** / **Alquimia**. **Categoría** (`#cons-item`: Sopas, Tortillas… en cocina; cada familia de pociones en alquimia) → **Comida/Poción** concreta (`#cons-recipe`, "T5 · Tortilla de cangrejo de río", value `FAMILIA|tier`) → encantamiento (solo comidas). Debajo se muestra el efecto y la receta. Cocina tiene **las 21 familias del juego**. Bajo la RRR se indica la ciudad con bono (cocina → Caerleon, alquimia → Brecilien). Panel "Costo de fabricación VS Precio de mercado" en verde/rojo/naranja. |
@@ -49,6 +49,7 @@ Resumen técnico para retomar el proyecto en un chat nuevo. Leer esto antes de t
 - `refresh(force)` reconstruye el modelo y **solo vuelve a pedir precios si cambia `priceKey`** (región + ciudades + tipo de venta + IDs). `recalc()` calcula sin tocar la API.
 - `calc.prices[id]` guarda los precios, que el usuario puede editar (los campos sin precio salen en naranja con `.missing`).
 - Material con `fallbackPrice`: se usa si la API no trae precio (semillas → precio del mercader de granja).
+- **Precio por ciudad de cada material**: `loadPrices` pide las 7 `CITIES` (+ ciudad de venta). `calc.cityPrices[id]` = `[{city, price, date}]` y `calc.priceSource[id]` = ciudad, `"npc"` (fallbackPrice) o `"manual"`. Debajo de cada precio hay un `select.price-source` (`buildSourceSelect`): ciudades de más barata a más cara (💰 la más barata, antigüedad con `ageLabel`), las sin datos deshabilitadas, "Mercader" si hay `fallbackPrice` y "✏️ Precio manual". Por defecto, la ciudad de "Comprar en". Escribir en el campo pasa el selector a manual. Vale para las 6 calculadoras.
 - `onRecalc(result)` (incluye `materialsCost` y `stationFee`) alimenta los paneles propios de cada pestaña (ensillado, veredicto de consumibles).
 
 ## 3. API (Albion Online Data Project)
@@ -82,6 +83,8 @@ Resumen técnico para retomar el proyecto en un chat nuevo. Leer esto antes de t
 - Las armaduras llevan `_SET1` (`HEAD_PLATE_SET1`…). Las herramientas son `2H_TOOL_PICK|AXE|SICKLE|KNIFE|HAMMER`. `BAG`, `CAPE` y `OFF_*` no llevan prefijo.
 
 **`RECIPES[code]`**: `{ METALBAR: 16, LEATHER: 8 }` (igual en T4–T8 y en todos los encantamientos). Solo armaduras, bolsas, capas y herramientas; las armas están en `CRAFT_WEAPONS`.
+
+**`CRAFT_BONUS`** (craftingmodifiers.xml, +15%): `craftingcategory → { name, city, rest? }`. `craftCategory(item)`: línea del arma (shieldtype/torchtype/booktype → `offhand`), `tools`, `bag`, `cape` o `<material>_<helmet|armor|shoes>` en armaduras. Herramientas → Caerleon; off-hands → Martlock; bolsas y capas → Brecilien. `rest` = descanso de Avalon (Arthur, Merlyn, Morgana) que también da el bono.
 
 **`CRAFT_WEAPONS`** (generado desde `items.xml` + `formatted/items.json`, nombres ES-ES sin "del iniciado"): `{ code, name, line, recipe, artifact?, artifactName?, artifactValue?, part?, partNames? }`.
 - `line` = shopsubcategory1 (`WEAPON_LINES` da el nombre ES; `OFFHAND_LINES` = shieldtype/torchtype/booktype).
@@ -186,7 +189,7 @@ Resumen técnico para retomar el proyecto en un chat nuevo. Leer esto antes de t
 - En Edge headless las transiciones CSS no avanzan con `--virtual-time-budget` (un interruptor puede verse apagado estando activo), y la ventana no baja de ~477 px de ancho.
 - Probar en Edge headless: `msedge --headless=new --virtual-time-budget=N --dump-dom http://localhost:PUERTO/index.html#pestaña` sobre una copia en el scratchpad servida con `python -m http.server`, con un script de volcado añadido al final. Usar un `--user-data-dir` nuevo en cada ejecución y apagar el servidor al terminar. Para capturas: `--screenshot=... --window-size=1280,1000`.
 - El heredoc de bash falla con bloques largos de código con acentos o comillas triples: escribir el script de Python en un archivo del scratchpad con Write y ejecutarlo.
-- **Caché**: `index.html` carga `style.css`, `market-data.js`, `fishing-data.js` y `script.js` con `?v=AAAAMMDD` + letra (ahora `20261002f`). Subir ese número en cada cambio (los cuatro a la vez); si no, el navegador mezcla el HTML nuevo con el JS viejo y la pestaña se rompe (pasó con el selector de Comida).
+- **Caché**: `index.html` carga `style.css`, `market-data.js`, `fishing-data.js` y `script.js` con `?v=AAAAMMDD` + letra (ahora `20261004a`). Subir ese número en cada cambio (los cuatro a la vez); si no, el navegador mezcla el HTML nuevo con el JS viejo y la pestaña se rompe (pasó con el selector de Comida).
 - Mantener el estilo: comentarios en español, datos al principio de `script.js` y reutilizar `createCalculator` y `makeButtonGroup`.
 - Para descargar los datos: `curl -sL https://raw.githubusercontent.com/ao-data/ao-bin-dumps/master/<archivo>` en el scratchpad (`items.xml` pesa ~10 MB y se puede buscar con grep).
 
@@ -209,6 +212,7 @@ Resumen técnico para retomar el proyecto en un chat nuevo. Leer esto antes de t
 15. **Cebo en Pesca**: el usuario pidió ver cuánto sube el "rate de captura" según el cebo. Se le aclaró que el cebo solo acelera la picada (no cambia qué pez sale) y se añadió el panel de cebo.
 16. **Especialización y pez objetivo**: el usuario preguntó si la especialización influye y quería saber si sube la tasa del pez que busca. Se le explicó que solo sube velocidad y doble captura (no la probabilidad del pez) y se añadieron niveles, comida y el cálculo del pez objetivo por captura y por hora.
 17. **Equipo de pescador**: el usuario pidió sumar el buff del equipo de pesca "a 10" (las 10 cargas). Se añadieron caña, gorro, atuendo, botas, mochila y el número de cargas; cada pieza solo cuenta para peces de su tier o menor.
+18. **Ciudad con bono en Crafteo y precio por ciudad de los materiales**: el usuario quería saber dónde fabricar (ej. la hoz → Caerleon, no Martlock) y poder ver el precio de los tablones en cada ciudad para elegir dónde comprarlos o escribir el suyo. Se añadió `CRAFT_BONUS` y el selector de ciudad en cada material (en todas las calculadoras).
 
 ## 8. Pendiente o por confirmar en el juego
 

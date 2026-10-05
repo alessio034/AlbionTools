@@ -323,6 +323,41 @@ const RRR_CRAFTING = [
   { value: "0.479", label: "47.9% — Con bono + Foco" },
 ];
 
+// Ciudad con +15% de crafteo según la craftingcategory del ítem (craftingmodifiers.xml).
+// "rest" = descansos de Avalon que también dan el bono (Arthur, Merlyn, Morgana).
+const CRAFT_BONUS = {
+  sword:             { name: "Espadas",               city: "Lymhurst",      rest: "Arthur" },
+  axe:               { name: "Hachas",                city: "Martlock",      rest: "Arthur" },
+  mace:              { name: "Mazas",                 city: "Thetford",      rest: "Arthur" },
+  hammer:            { name: "Martillos",             city: "Fort Sterling", rest: "Arthur" },
+  crossbow:          { name: "Ballestas",             city: "Bridgewatch",   rest: "Arthur" },
+  knuckles:          { name: "Guanteletes",           city: "Caerleon",      rest: "Arthur" },
+  bow:               { name: "Arcos",                 city: "Lymhurst",      rest: "Merlyn" },
+  dagger:            { name: "Dagas",                 city: "Bridgewatch",   rest: "Merlyn" },
+  quarterstaff:      { name: "Bastones de combate",   city: "Martlock",      rest: "Merlyn" },
+  spear:             { name: "Lanzas",                city: "Fort Sterling", rest: "Merlyn" },
+  naturestaff:       { name: "Bastones de naturaleza", city: "Thetford",     rest: "Merlyn" },
+  shapeshifterstaff: { name: "Cambiaformas",          city: "Caerleon",      rest: "Merlyn" },
+  arcanestaff:       { name: "Bastones arcanos",      city: "Lymhurst",      rest: "Morgana" },
+  cursestaff:        { name: "Bastones malditos",     city: "Bridgewatch",   rest: "Morgana" },
+  firestaff:         { name: "Bastones de fuego",     city: "Thetford",      rest: "Morgana" },
+  froststaff:        { name: "Bastones de escarcha",  city: "Martlock",      rest: "Morgana" },
+  holystaff:         { name: "Bastones sagrados",     city: "Fort Sterling", rest: "Morgana" },
+  offhand:           { name: "Escudos, antorchas y libros", city: "Martlock" },
+  plate_helmet:      { name: "Cascos de placas",      city: "Fort Sterling", rest: "Arthur" },
+  plate_armor:       { name: "Armaduras de placas",   city: "Bridgewatch",   rest: "Arthur" },
+  plate_shoes:       { name: "Botas de placas",       city: "Martlock",      rest: "Arthur" },
+  leather_helmet:    { name: "Capuchas de cuero",     city: "Lymhurst",      rest: "Merlyn" },
+  leather_armor:     { name: "Chaquetas de cuero",    city: "Thetford",      rest: "Merlyn" },
+  leather_shoes:     { name: "Zapatos de cuero",      city: "Lymhurst",      rest: "Merlyn" },
+  cloth_helmet:      { name: "Capuchas de tela",      city: "Thetford",      rest: "Morgana" },
+  cloth_armor:       { name: "Túnicas de tela",       city: "Fort Sterling", rest: "Morgana" },
+  cloth_shoes:       { name: "Sandalias de tela",     city: "Bridgewatch",   rest: "Morgana" },
+  tools:             { name: "Herramientas",          city: "Caerleon" },
+  bag:               { name: "Bolsas",                city: "Brecilien" },
+  cape:              { name: "Capas",                 city: "Brecilien" },
+};
+
 // ============================================================
 //  DATOS DE CARNICERÍA
 // ============================================================
@@ -1308,6 +1343,15 @@ function formatDate(date) {
   return date.toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" });
 }
 
+// Antigüedad corta de un precio: "hace 5 min", "hace 3 h", "hace 2 d".
+function ageLabel(date) {
+  if (!date) return "sin fecha";
+  const minutes = Math.max(0, (Date.now() - date) / 60000);
+  if (minutes < 60) return `hace ${Math.round(minutes)} min`;
+  if (minutes < 60 * 48) return `hace ${Math.round(minutes / 60)} h`;
+  return `hace ${Math.round(minutes / 1440)} d`;
+}
+
 function showItemHeader(itemId, title) {
   itemImg.style.visibility = "visible";
   itemImg.onerror = () => (itemImg.style.visibility = "hidden");
@@ -1377,6 +1421,8 @@ function createCalculator(prefix, { rrrOptions = [], buildModel, defaultBuyCity,
   const calc = {
     model: null,
     prices: {},      // id → precio unitario (editable por el usuario)
+    cityPrices: {},  // id de material → [{ city, price, date }] en todas las ciudades (para su selector)
+    priceSource: {}, // id de material → ciudad elegida, "npc" o "manual"
     priceKey: null,  // si cambia (ítems, ciudades, región...) hay que volver a pedir precios
     request: null,
     ui,
@@ -1473,7 +1519,8 @@ function createCalculator(prefix, { rrrOptions = [], buildModel, defaultBuyCity,
     setStatus(ui.status, "Cargando precios...");
 
     try {
-      const rows = await fetchPrices(ids, { locations: [s.buyCity, s.sellCity], qualities: 1 }, controller.signal);
+      // Se piden todas las ciudades para que cada material pueda comprarse donde esté más barato.
+      const rows = await fetchPrices(ids, { locations: [...CITIES, s.sellCity], qualities: 1 }, controller.signal);
       const find = (id, city) => rows.find((r) => r.item_id === id && r.city === city);
 
       // Comprar: precio de compra inmediata (orden de venta más barata) en la ciudad de compra.
@@ -1485,7 +1532,15 @@ function createCalculator(prefix, { rrrOptions = [], buildModel, defaultBuyCity,
       };
 
       // fallbackPrice: precio de respaldo si la API no tiene datos (ej. semillas del mercader de granja).
-      calc.model.materials.forEach((m) => (calc.prices[m.id] = buyPrice(m.id) || m.fallbackPrice || 0));
+      calc.model.materials.forEach((m) => {
+        calc.cityPrices[m.id] = CITIES.map((city) => {
+          const row = find(m.id, city);
+          return { city, price: row?.sell_price_min || 0, date: latestDate(row?.sell_price_min_date) };
+        });
+        const price = buyPrice(m.id);
+        calc.prices[m.id] = price || m.fallbackPrice || 0;
+        calc.priceSource[m.id] = price ? s.buyCity : m.fallbackPrice ? "npc" : "manual";
+      });
       calc.prices[calc.model.product.id] = sellPrice(calc.model.product.id);
       (calc.model.extras ?? []).forEach((e) => (calc.prices[e.id] = e.side === "sell" ? sellPrice(e.id) : buyPrice(e.id)));
 
@@ -1495,7 +1550,7 @@ function createCalculator(prefix, { rrrOptions = [], buildModel, defaultBuyCity,
         ui.status,
         missing
           ? `⚠️ ${missing} precio(s) sin datos en la API. Escríbelos a mano en los campos marcados.`
-          : `Precios de ${s.buyCity} (compra) y ${s.sellCity} (venta). Puedes editarlos.`
+          : `Precios de ${s.buyCity} (compra) y ${s.sellCity} (venta). Puedes editarlos o elegir otra ciudad en cada material.`
       );
     } catch (err) {
       if (err.name === "AbortError") return;
@@ -1511,6 +1566,29 @@ function createCalculator(prefix, { rrrOptions = [], buildModel, defaultBuyCity,
     ui.productImg.alt = product.name;
     ui.productName.textContent = product.name;
     ui.productId.textContent = product.id;
+  }
+
+  // Selector "dónde lo compro" de un material: cada ciudad con su precio (la más barata primero),
+  // el precio del mercader si lo tiene, o "Precio manual" (lo que el usuario escriba en el campo).
+  function buildSourceSelect(m) {
+    const select = document.createElement("select");
+    select.className = "price-source";
+    select.title = "Ciudad donde compras este material";
+    const cities = [...(calc.cityPrices[m.id] ?? [])].sort((a, b) => (a.price || Infinity) - (b.price || Infinity));
+    const cheapest = cities[0]?.price ? cities[0].price : 0;
+    cities.forEach(({ city, price, date }) => {
+      const text = price
+        ? `${city} · ${formatSilver(price)}${price === cheapest ? " 💰" : ""} (${ageLabel(date)})`
+        : `${city} · sin datos`;
+      const option = new Option(text, city);
+      option.disabled = !price;
+      select.add(option);
+    });
+    if (m.fallbackPrice) select.add(new Option(`Mercader · ${formatSilver(m.fallbackPrice)}`, "npc"));
+    select.add(new Option("✏️ Precio manual", "manual"));
+    select.value = calc.priceSource[m.id] ?? "manual";
+    if (!select.value) select.value = "manual"; // la ciudad guardada ya no tiene precio
+    return select;
   }
 
   function renderMaterials() {
@@ -1530,11 +1608,23 @@ function createCalculator(prefix, { rrrOptions = [], buildModel, defaultBuyCity,
       priceInput.min = "0";
       priceInput.className = "price-input";
       priceInput.value = calc.prices[m.id] ?? 0;
+      const sourceSelect = buildSourceSelect(m);
       priceInput.addEventListener("input", () => {
         calc.prices[m.id] = Number(priceInput.value) || 0;
+        calc.priceSource[m.id] = sourceSelect.value = "manual";
         recalc();
       });
-      priceTd.appendChild(priceInput);
+      sourceSelect.addEventListener("change", () => {
+        const source = sourceSelect.value;
+        calc.priceSource[m.id] = source;
+        if (source === "manual") return priceInput.focus();
+        const price = source === "npc" ? m.fallbackPrice : calc.cityPrices[m.id].find((c) => c.city === source).price;
+        calc.prices[m.id] = price;
+        priceInput.value = price;
+        recalc();
+      });
+      priceTd.className = "price-cell";
+      priceTd.append(priceInput, sourceSelect);
 
       m.cells = { base: cell(""), used: cell(""), subtotal: cell(""), input: priceInput };
       tr.append(nameTd, m.cells.base, m.cells.used, priceTd, m.cells.subtotal);
@@ -1905,8 +1995,39 @@ const craftItemSelect = $("craft-item");
 craftItemSelect.value = crafting.category;
 craftItemSelect.addEventListener("change", () => {
   crafting.category = craftItemSelect.value;
+  updateCraftBonusCity();
   calculators.crafting.refresh();
 });
+
+// craftingcategory del ítem (clave de CRAFT_BONUS): la línea del arma, "offhand", "tools",
+// "bag", "cape" o <material>_<pieza> en armaduras (HEAD_PLATE_SET1 → plate_helmet).
+function craftCategory(item) {
+  if (item.line) return OFFHAND_LINES.includes(item.line) ? "offhand" : item.line;
+  if (item.code.startsWith("2H_TOOL_")) return "tools";
+  if (item.code === "BAG") return "bag";
+  if (item.code === "CAPE") return "cape";
+  const [, slot, material] = item.code.match(/^(HEAD|ARMOR|SHOES)_([A-Z]+)_SET1$/) ?? [];
+  const piece = { HEAD: "helmet", ARMOR: "armor", SHOES: "shoes" }[slot];
+  return piece ? `${material.toLowerCase()}_${piece}` : null;
+}
+
+// La ciudad con bono depende del ítem: se muestra en las opciones de RRR y debajo del selector.
+const craftBonusCity = $("craft-bonus-city");
+function updateCraftBonusCity() {
+  const bonus = CRAFT_BONUS[craftCategory(currentCraftItem())];
+  const labels = bonus
+    ? { "0.248": `24.8% — ${bonus.city} (bono de ${bonus.name})`, "0.479": `47.9% — ${bonus.city} + Foco` }
+    : { "0.248": RRR_CRAFTING[1].label, "0.479": RRR_CRAFTING[3].label };
+  [...calculators.crafting.ui.rrr.options].forEach((o) => {
+    if (labels[o.value]) o.textContent = labels[o.value];
+  });
+  craftBonusCity.innerHTML = bonus
+    ? `★ <b>${bonus.city}</b> con bono de crafteo de <b>${bonus.name}</b> (+15%)` +
+      (bonus.rest ? `. También en el descanso de ${bonus.rest} (Avalon).` : ".") +
+      ` En otras ciudades usa las opciones "sin bono".`
+    : "";
+}
+updateCraftBonusCity();
 
 makeButtonGroup($("craft-tier"), tierOptions(), crafting.tier, (t) => {
   crafting.tier = t;
