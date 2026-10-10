@@ -206,6 +206,11 @@ input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: -1
   border-bottom: 1px solid var(--border);
   scrollbar-width: thin;
 }
+/* Con 12 pestañas no caben en una línea: en escritorio pasan a la siguiente; en móvil se desplazan. */
+@media (min-width: 700px) {
+  .tabs { flex-wrap: wrap; overflow-x: visible; gap: 2px; }
+  .tabs .tab { padding: 8px 10px; }
+}
 
 .tab {
   position: relative;

@@ -19,7 +19,7 @@ Resumen técnico para retomar el proyecto en un chat nuevo. Leer esto antes de t
 
 | Pestaña | Qué hace |
 |---|---|
-| **Mercado** | 3 niveles: pestaña (Armas, Secundarias, Armaduras, Accesorios, Recolección, Artefactos, Recursos, Materiales, Consumibles, Granja, Monturas) → subcategoría → ítem con icono. Datos en `MARKET_TABS` (`market-data.js`, **666 ítems**). Buscador por nombre sin tildes (máx. 60 resultados), Tier T1–T8 y Encantamiento; solo se activan los tiers y encantamientos que existen para el ítem. Admite un ID manual. |
+| **Mercado** | 3 niveles: pestaña (Armas, Secundarias, Armaduras, Accesorios, Recolección, Artefactos, Recursos, Materiales, Consumibles, Granja, Monturas, **Facciones**) → subcategoría → ítem con icono. Datos en `MARKET_TABS` (`market-data.js`, **740 entradas**). Facciones = Corazones, Capas, Insignias, Monturas, Crías y adultos, Sellos y fichas (sellos reales T4–T8, Energía avaloniana, Sello de Arena, Token de Caballo real) y Tesoros (21 `TREASURE_*`); capas, insignias, monturas y crías están repetidas de sus pestañas. En escritorio (≥ 700 px) las pestañas del Mercado hacen `flex-wrap` con padding reducido; en móvil se desplazan. Buscador por nombre sin tildes (máx. 60 resultados), Tier T1–T8 y Encantamiento; solo se activan los tiers y encantamientos que existen para el ítem. Admite un ID manual. |
 | **Refinamiento** | Recurso (madera/metal/cuero/tela/piedra), tier, encantamiento, RRR y Foco (enlazados). Materiales: brutos + 1 refinado del tier anterior. La piedra no se encanta. |
 | **Crafteo** | `CRAFT_ITEMS` = **155 armas y off-hands** de `CRAFT_WEAPONS` (normales y de artefacto ◆, una sección por línea) + armaduras, bolsas, capas y herramientas de `CATEGORIES`/`RECIPES`. Tier, encantamiento, RRR y tarifa de estación. El artefacto y los restos de criatura entran como materiales no retornables. Bajo la RRR se indica la ciudad con bono del ítem (`CRAFT_BONUS`, ej. "★ Caerleon con bono de crafteo de Herramientas") y las opciones 24.8/47.9% llevan su nombre. |
 | **Crianza** | Sub-pestañas **Domésticos** / **Monturas Especiales** (optgroups Salvajes, Ciervos, Facción). Cría + comida → adulto. Si el animal se ensilla, un panel compara vender el adulto crudo vs. ensillarlo. Los chips de info muestran crecimiento en h y días, nutrición y **comida por día** (por animal y total). |
@@ -73,9 +73,10 @@ Resumen técnico para retomar el proyecto en un chat nuevo. Leer esto antes de t
 
 **`CATEGORIES`**: `{ name, code, group }`. **Solo la usa Crafteo** (armaduras SET1, bolsa, capa, herramientas); el Mercado ya no.
 
-**`MARKET_TABS`** (`market-data.js`): `[{ name, subs: [{ name, items: [{ code, name, tiers: "1-8" | "1,3,5", ench, names?, level? }] }] }]`.
-- `script.js` lo aplana en `MARKET_ITEMS` (añade `tab`, `sub` y `tierList`).
-- ID: `marketItemId` → `materialId` si `level` (recursos: `T5_FIBER_LEVEL2@2`), si no `T{t}_{code}@e`.
+**`MARKET_TABS`** (`market-data.js`): `[{ name, subs: [{ name, items: [{ code, name, tiers: "1-8" | "1,3,5", ench, names?, level?, fixedId? }] }] }]`.
+- `script.js` lo aplana en `MARKET_ITEMS` (añade `tab`, `sub`, `tierList`, `key` = `pestaña|sub|code` y `noTier`). **La selección va por `market.key`, no por code**, porque un ítem puede estar en dos pestañas (Facciones repite capas, insignias, monturas y crías). El buscador quita repetidos por code (se queda la primera aparición).
+- ID: `marketItemId` → si `fixedId`, el `code` tal cual con `{t}` cambiado por el tier (`QUESTITEM_TOKEN_ROYAL_T{t}`, `QUESTITEM_TOKEN_AVALON`, `TREASURE_*`); si `level`, `materialId` (recursos: `T5_FIBER_LEVEL2@2`); si no `T{t}_{code}@e`. `noTier` (fixedId sin `{t}`): botones de tier desactivados, el título no lleva tier y no se toca `market.tier`. Icono con `marketIconId(item)`.
+- Los corazones son `T1_FACTION_*_TOKEN_1` normales (code sin `T1_`, tiers "1"); el de Brecilien es `QUESTITEM_TOKEN_MISTS` = **Fuego de hadas** (sin precios en la API west).
 - `names[tier]`: nombre exacto cuando cambia por tier (recursos, carne, peces, pociones menor/mayor…). El botón usa las palabras comunes ("Carne") o una etiqueta de `LABELS`.
 - `ench` = encantamiento máximo. Piedra bruta .3, bloques de piedra 0, el resto de recursos .4 (fijados a mano, porque en items.xml los recursos encantados son códigos `_LEVEL` aparte).
 - **Cómo regenerarlo**: descargar `items.xml` y `formatted/items.json`. Recorrer los ítems `T{n}_{code}` y quedarse con los `shopcategory`/`shopsubcategory1` útiles; excluir `tradable="false"` y códigos con NONTRADABLE, DEBUG, SKIN, PROTOTYPE, EVENT, XMAS, GVG, SEASON… Luego sacar los tiers existentes y el máximo de `<enchantment>`, y quitar del nombre ES el sufijo de tier ("del principiante/novato/aprendiz/obrero/iniciado/experto/maestro/gran maestro/anciano").
@@ -189,7 +190,7 @@ Resumen técnico para retomar el proyecto en un chat nuevo. Leer esto antes de t
 - En Edge headless las transiciones CSS no avanzan con `--virtual-time-budget` (un interruptor puede verse apagado estando activo), y la ventana no baja de ~477 px de ancho.
 - Probar en Edge headless: `msedge --headless=new --virtual-time-budget=N --dump-dom http://localhost:PUERTO/index.html#pestaña` sobre una copia en el scratchpad servida con `python -m http.server`, con un script de volcado añadido al final. Usar un `--user-data-dir` nuevo en cada ejecución y apagar el servidor al terminar. Para capturas: `--screenshot=... --window-size=1280,1000`.
 - El heredoc de bash falla con bloques largos de código con acentos o comillas triples: escribir el script de Python en un archivo del scratchpad con Write y ejecutarlo.
-- **Caché**: `index.html` carga `style.css`, `market-data.js`, `fishing-data.js` y `script.js` con `?v=AAAAMMDD` + letra (ahora `20261004a`). Subir ese número en cada cambio (los cuatro a la vez); si no, el navegador mezcla el HTML nuevo con el JS viejo y la pestaña se rompe (pasó con el selector de Comida).
+- **Caché**: `index.html` carga `style.css`, `market-data.js`, `fishing-data.js` y `script.js` con `?v=AAAAMMDD` + letra (ahora `20261010a`). Subir ese número en cada cambio (los cuatro a la vez); si no, el navegador mezcla el HTML nuevo con el JS viejo y la pestaña se rompe (pasó con el selector de Comida).
 - Mantener el estilo: comentarios en español, datos al principio de `script.js` y reutilizar `createCalculator` y `makeButtonGroup`.
 - Para descargar los datos: `curl -sL https://raw.githubusercontent.com/ao-data/ao-bin-dumps/master/<archivo>` en el scratchpad (`items.xml` pesa ~10 MB y se puede buscar con grep).
 
@@ -213,6 +214,7 @@ Resumen técnico para retomar el proyecto en un chat nuevo. Leer esto antes de t
 16. **Especialización y pez objetivo**: el usuario preguntó si la especialización influye y quería saber si sube la tasa del pez que busca. Se le explicó que solo sube velocidad y doble captura (no la probabilidad del pez) y se añadieron niveles, comida y el cálculo del pez objetivo por captura y por hora.
 17. **Equipo de pescador**: el usuario pidió sumar el buff del equipo de pesca "a 10" (las 10 cargas). Se añadieron caña, gorro, atuendo, botas, mochila y el número de cargas; cada pieza solo cuenta para peces de su tier o menor.
 18. **Ciudad con bono en Crafteo y precio por ciudad de los materiales**: el usuario quería saber dónde fabricar (ej. la hoz → Caerleon, no Martlock) y poder ver el precio de los tablones en cada ciudad para elegir dónde comprarlos o escribir el suyo. Se añadió `CRAFT_BONUS` y el selector de ciudad en cada material (en todas las calculadoras).
+19. **Facciones en el Mercado**: el usuario pidió ver precios de cosas de facciones, corazones, etc. Se añadió la pestaña Facciones (corazones de las 7 ciudades, capas, insignias, monturas y crías de facción, sellos reales, Energía avaloniana, Sello de Arena, Token de Caballo real y tesoros) con soporte de IDs sin tier (`fixedId`) y selección por `key`.
 
 ## 8. Pendiente o por confirmar en el juego
 
@@ -230,3 +232,4 @@ Resumen técnico para retomar el proyecto en un chat nuevo. Leer esto antes de t
 - **Precio de semillas del mercader**: `npcPrice` es el base de items.xml; en el juego cambia con el precio del oro.
 - **Probabilidad de semilla**: fija con los datos del juego (no editable). El usuario puede pedir un campo editable como el de "Prob. de cría".
 - **Si la probabilidad de cría o de semilla pasa de 100%**, el gasto de crías o semillas sale negativo (las extra valen su precio). Se ofreció dejarlo en 0; el usuario no respondió.
+- **Fuego de hadas (corazón de Brecilien)**: `QUESTITEM_TOKEN_MISTS` no tiene precios en la API (west). Si el usuario dice que se vende en el mercado con otro ID, cambiarlo. Los tokens de Ávalon (`QUESTITEM_TOKEN_KEEPER/MORGANA/UNDEAD`) y la Moneda de Contrabandista no se añadieron: sin precios.

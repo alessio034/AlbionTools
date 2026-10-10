@@ -1127,7 +1127,8 @@ window.addEventListener("hashchange", () => showTab(location.hash.slice(1)));
 //  PESTAÑA: MERCADO
 // ============================================================
 // Los ítems vienen de market-data.js (MARKET_TABS: pestaña → subcategoría → ítems).
-const market = { code: "BAG", tier: 4, enchant: 0 };
+// key = "pestaña|subcategoría|code": un mismo ítem puede estar en dos pestañas (ej. Capas y Facciones).
+const market = { key: null, tier: 4, enchant: 0 };
 
 // "1-8" → [1..8]; "1,3,5" → [1,3,5]
 function parseTiers(str) {
@@ -1136,15 +1137,29 @@ function parseTiers(str) {
   return Array.from({ length: b - a + 1 }, (_, i) => a + i);
 }
 
-// Índice plano: { code, name, tiers, ench, names?, level?, tab, sub, tierList }
+// Índice plano: { code, name, tiers, ench, names?, level?, fixedId?, tab, sub, tierList, key, noTier }
 const MARKET_ITEMS = MARKET_TABS.flatMap((tab) =>
-  tab.subs.flatMap((sub) => sub.items.map((item) => ({ ...item, tab: tab.name, sub: sub.name, tierList: parseTiers(item.tiers) })))
+  tab.subs.flatMap((sub) =>
+    sub.items.map((item) => ({
+      ...item,
+      tab: tab.name,
+      sub: sub.name,
+      tierList: parseTiers(item.tiers),
+      key: `${tab.name}|${sub.name}|${item.code}`,
+      // Ítems con ID fijo sin tier (corazón de Brecilien, tesoros, Energía avaloniana…): sin botones de tier.
+      noTier: Boolean(item.fixedId && !item.code.includes("{t}")),
+    }))
+  )
 );
-const marketItem = (code) => MARKET_ITEMS.find((i) => i.code === code);
+const marketItem = (key) => MARKET_ITEMS.find((i) => i.key === key);
+market.key = MARKET_ITEMS.find((i) => i.code === "BAG").key;
 const marketItemName = (item, tier) => item.names?.[tier] ?? item.name;
-const marketItemId = (item, tier, enchant) =>
-  item.level ? materialId(item.code, tier, enchant) : buildItemId({ category: item.code, tier, enchant });
+const marketItemId = (item, tier, enchant) => {
+  if (item.fixedId) return item.code.replace("{t}", tier);
+  return item.level ? materialId(item.code, tier, enchant) : buildItemId({ category: item.code, tier, enchant });
+};
 const iconTier = (item) => item.tierList.find((t) => t >= 4) ?? item.tierList[item.tierList.length - 1];
+const marketIconId = (item) => marketItemId(item, iconTier(item), 0);
 // Para buscar sin tildes ni mayúsculas.
 const normalize = (text) => text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
 
@@ -1203,7 +1218,7 @@ function renderGroupTabs() {
 function showGroup(tabName, subName) {
   visibleTab = tabName;
   const tab = MARKET_TABS.find((t) => t.name === tabName);
-  const current = marketItem(market.code);
+  const current = marketItem(market.key);
   visibleSub = subName ?? (current.tab === tabName ? current.sub : tab.subs[0].name);
   makeButtonGroup(subGroup, tab.subs.map((s) => ({ label: s.name, value: s.name })), visibleSub, (sub) => showGroup(tabName, sub));
   subGroup.classList.toggle("hidden", tab.subs.length < 2);
@@ -1213,9 +1228,9 @@ function showGroup(tabName, subName) {
 }
 
 function renderItemButtons(items) {
-  const options = items.map((item) => ({ label: item.name, value: item.code, icon: `T${iconTier(item)}_${item.code}` }));
-  categoryButtons = makeButtonGroup(categoryGroup, options, market.code, (code) => {
-    market.code = code;
+  const options = items.map((item) => ({ label: item.name, value: item.key, icon: marketIconId(item) }));
+  categoryButtons = makeButtonGroup(categoryGroup, options, market.key, (key) => {
+    market.key = key;
     updateFromFilters();
   });
 }
@@ -1225,12 +1240,17 @@ const MAX_FILTER_RESULTS = 60;
 itemFilter.addEventListener("input", () => {
   const query = normalize(itemFilter.value.trim());
   if (!query) {
-    showGroup(visibleTab ?? marketItem(market.code).tab);
+    showGroup(visibleTab ?? marketItem(market.key).tab);
     return;
   }
-  const matches = MARKET_ITEMS.filter((item) =>
-    [item.name, item.code, ...Object.values(item.names ?? {})].some((text) => normalize(text).includes(query))
-  );
+  // Los ítems repetidos en Facciones salen una sola vez (la primera aparición).
+  const seen = new Set();
+  const matches = MARKET_ITEMS.filter((item) => {
+    if (seen.has(item.code)) return false;
+    const found = [item.name, item.code, ...Object.values(item.names ?? {})].some((text) => normalize(text).includes(query));
+    if (found) seen.add(item.code);
+    return found;
+  });
   subGroup.classList.add("hidden");
   renderItemButtons(matches.slice(0, MAX_FILTER_RESULTS));
   filterHint.textContent = matches.length
@@ -1242,7 +1262,7 @@ itemFilter.addEventListener("input", () => {
 
 // Marca la pestaña visible y pone un punto en la que contiene el ítem seleccionado.
 function updateTabs() {
-  const selectedTab = marketItem(market.code)?.tab;
+  const selectedTab = marketItem(market.key)?.tab;
   groupTabs.querySelectorAll(".tab").forEach((tab) => {
     const isVisible = tab.dataset.group === visibleTab;
     tab.classList.toggle("active", isVisible);
@@ -1252,23 +1272,28 @@ function updateTabs() {
 }
 
 function updateFromFilters() {
-  const item = marketItem(market.code);
+  const item = marketItem(market.key);
   // Solo se activan los tiers y encantamientos que existen para este ítem.
-  if (!item.tierList.includes(market.tier)) {
-    market.tier = item.tierList.reduce((best, t) => (Math.abs(t - market.tier) < Math.abs(best - market.tier) ? t : best));
-  }
-  tierButtons.disable((v) => !item.tierList.includes(Number(v)));
+  // Los de ID sin tier no tocan market.tier, para que el siguiente ítem conserve el tier elegido.
+  const tier = item.noTier
+    ? item.tierList[0]
+    : item.tierList.includes(market.tier)
+      ? market.tier
+      : item.tierList.reduce((best, t) => (Math.abs(t - market.tier) < Math.abs(best - market.tier) ? t : best));
+  if (!item.noTier) market.tier = tier;
+  tierButtons.disable((v) => item.noTier || !item.tierList.includes(Number(v)));
   enchantButtons.disable((v) => Number(v) > item.ench);
   market.enchant = Math.min(market.enchant, item.ench);
 
   input.value = "";
-  categoryButtons.set(market.code);
-  tierButtons.set(market.tier);
+  categoryButtons.set(market.key);
+  tierButtons.set(item.noTier ? null : tier);
   enchantButtons.set(market.enchant);
   updateTabs();
 
-  const itemId = marketItemId(item, market.tier, market.enchant);
-  searchItem(itemId, `${marketItemName(item, market.tier)} ${tierLabel(market.tier, market.enchant)}`);
+  const itemId = marketItemId(item, tier, market.enchant);
+  const name = marketItemName(item, tier);
+  searchItem(itemId, item.noTier ? name : `${name} ${tierLabel(tier, market.enchant)}`);
 }
 
 let marketRequest = null; // para cancelar peticiones viejas si el usuario hace clic rápido
@@ -3362,6 +3387,6 @@ regionSelect.addEventListener("change", () => {
 });
 
 renderGroupTabs();
-showGroup(marketItem(market.code).tab);
+showGroup(marketItem(market.key).tab);
 updateFromFilters();
 showTab(location.hash.slice(1));
